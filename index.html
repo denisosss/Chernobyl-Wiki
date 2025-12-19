@@ -3,6 +3,7 @@
 <head>
     <title>ChernobylWiki</title>
     <meta charset='UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* ТВОЙ БАЗОВЫЙ КОД БЕЗ ИЗМЕНЕНИЙ */
@@ -115,18 +116,17 @@
 
         p { font-size: 18px; line-height: 1.6; margin-bottom: 25px; }
 
-        /* СПЕЦИАЛЬНЫЙ СТИЛЬ ДЛЯ ВЕРСТКИ С ФОТО */
         .jupiter-layout {
             display: flex;
             gap: 25px;
         }
 
         .jupiter-text {
-            flex: 2; /* Текст занимает больше места */
+            flex: 2;
         }
 
         .jupiter-gallery {
-            flex: 1; /* Колонка для фото */
+            flex: 1;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -143,6 +143,55 @@
             filter: grayscale(0);
             border-color: #22ff22;
             transform: scale(1.02);
+        }
+
+        /* --- НОВЫЙ БЛОК ДЛЯ ПОДДЕРЖКИ ТЕЛЕФОНОВ --- */
+        @media screen and (max-width: 768px) {
+            body {
+                flex-direction: column; /* Сайдбар теперь сверху */
+                overflow-y: auto;       /* Разрешаем скролл страницы */
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 3px double #004400;
+                padding: 15px;
+                position: sticky; /* Меню прилипает к верху */
+                top: 0;
+            }
+
+            .sidebar h2 { margin-bottom: 10px; }
+
+            .tab-button {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .content-container {
+                height: auto;
+                padding: 20px;
+                overflow: visible;
+            }
+
+            h1 { font-size: 18px; }
+
+            .tab-content {
+                height: auto;
+                overflow: visible;
+                padding: 15px;
+            }
+
+            .jupiter-layout {
+                flex-direction: column; /* Текст и фото в одну колонку */
+            }
+
+            p { font-size: 16px; }
+            
+            h2.tab-title { font-size: 12px; }
         }
     </style>
 </head>
@@ -182,7 +231,7 @@
             <div class="jupiter-layout">
                 <div class="jupiter-text">
                     <p>Завод «Юпитер» — одно из самых загадочных мест Припяти. Официально он производил детали для магнитофонов, но на деле выполнял оборонные заказы.</p>
-                    <p>После аварии здесь располагались лаборатории для испытания роботов и дезактивации техники. В подвалах завода до сих пор находят образцы почвы с аномально высоким уровнем радиации.</p>
+                    <p>После аварии здесь располагавались лаборатории для испытания роботов и дезактивации техники. В подвалах завода до сих пор находят образцы почвы с аномально высоким уровнем радиации.</p>
                 </div>
                 <div class="jupiter-gallery">
                     <img src="https://th.bing.com/th/id/R.326be3fd5d1295c6f69ba639231e1d7b?rik=knSjavHdRJ8%2b%2fQ&pid=ImgRaw&r=0" alt="Yupiter 1">
@@ -205,6 +254,11 @@
             }
             document.getElementById(tabId).style.display = 'block';
             btn.classList.add('active-tab');
+            
+            // Авто-скролл к контенту на мобилках при клике
+            if (window.innerWidth <= 768) {
+                document.querySelector('.content-container').scrollIntoView({ behavior: 'smooth' });
+            }
         }
         window.onload = function() {
             document.querySelector('.tab-button').classList.add('active-tab');
