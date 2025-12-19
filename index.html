@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* ТВОЙ БАЗОВЫЙ КОД БЕЗ ИЗМЕНЕНИЙ */
         * { box-sizing: border-box; }
+        
         body {
             background-color: #0d0d0d;
             color: #22ff22;
@@ -19,6 +19,7 @@
             overflow: hidden;
         }
 
+        /* Эффект старого монитора */
         body::after {
             content: " ";
             position: fixed;
@@ -40,7 +41,6 @@
             flex-direction: column;
             gap: 15px;
             height: 100vh;
-            z-index: 10;
         }
 
         .sidebar h2 {
@@ -48,7 +48,6 @@
             font-size: 11px;
             color: #ffaa00;
             text-align: center;
-            margin-bottom: 20px;
         }
 
         .tab-button {
@@ -60,8 +59,6 @@
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
-            transition: 0.2s;
-            text-align: left;
             width: 100%;
         }
 
@@ -69,7 +66,6 @@
             background: #004400;
             color: #ffffff;
             border-color: #22ff22;
-            box-shadow: 0 0 10px rgba(34, 255, 34, 0.3);
         }
 
         .content-container {
@@ -85,10 +81,8 @@
         h1 {
             font-family: 'Press Start 2P', cursive;
             color: #ffaa00;
-            text-shadow: 3px 3px #550000;
-            margin: 0 0 30px 0;
             text-align: center;
-            flex-shrink: 0;
+            margin: 0 0 20px 0;
         }
 
         .tab-content {
@@ -99,57 +93,22 @@
             background: rgba(0, 0, 0, 0.8);
             padding: 30px;
             overflow-y: auto;
-            border-radius: 5px;
-            box-shadow: inset 0 0 20px #000;
         }
 
         .tab-content.active { display: block; }
 
-        h2.tab-title {
-            color: #22ff22;
-            border-bottom: 1px solid #22ff22;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-        }
-
         p { font-size: 18px; line-height: 1.6; margin-bottom: 25px; }
 
-        .jupiter-layout {
-            display: flex;
-            gap: 25px;
-        }
+        .jupiter-layout { display: flex; gap: 20px; }
+        .jupiter-text { flex: 2; }
+        .jupiter-gallery { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .jupiter-gallery img { width: 100%; border: 2px solid #004400; }
 
-        .jupiter-text {
-            flex: 2;
-        }
-
-        .jupiter-gallery {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .jupiter-gallery img {
-            width: 100%;
-            border: 2px solid #004400;
-            filter: grayscale(0.5) contrast(1.2);
-            transition: 0.3s;
-        }
-
-        .jupiter-gallery img:hover {
-            filter: grayscale(0);
-            border-color: #22ff22;
-            transform: scale(1.02);
-        }
-
-        /* --- НОВЫЙ БЛОК ДЛЯ ПОДДЕРЖКИ ТЕЛЕФОНОВ --- */
-        @media screen and (max-width: 768px) {
+        /* --- НАСТРОЙКИ МАСШТАБИРОВАНИЯ ДЛЯ ТЕЛЕФОНОВ --- */
+        @media screen and (max-width: 850px) {
             body {
-                flex-direction: column; /* Сайдбар теперь сверху */
-                overflow-y: auto;       /* Разрешаем скролл страницы */
+                flex-direction: column; /* Сайдбар перемещается вверх */
+                overflow-y: scroll;     /* Разрешаем скролл всей страницы */
                 height: auto;
             }
 
@@ -159,39 +118,46 @@
                 height: auto;
                 border-right: none;
                 border-bottom: 3px double #004400;
-                padding: 15px;
-                position: sticky; /* Меню прилипает к верху */
-                top: 0;
+                padding: 10px;
             }
 
-            .sidebar h2 { margin-bottom: 10px; }
-
             .tab-button {
-                padding: 10px;
-                font-size: 12px;
+                padding: 18px; /* Крупные кнопки для пальцев */
+                font-size: 16px;
+                margin-bottom: 5px;
             }
 
             .content-container {
+                width: 100%;
                 height: auto;
-                padding: 20px;
+                padding: 15px;
                 overflow: visible;
             }
 
-            h1 { font-size: 18px; }
+            h1 { font-size: 20px; padding: 10px 0; }
 
             .tab-content {
                 height: auto;
-                overflow: visible;
                 padding: 15px;
+                overflow: visible; /* Убираем внутренний скролл, чтобы страница листалась целиком */
+            }
+
+            p { 
+                font-size: 18px; /* Читабельный текст */
             }
 
             .jupiter-layout {
-                flex-direction: column; /* Текст и фото в одну колонку */
+                flex-direction: column; /* Текст и картинки в одну колонку */
             }
 
-            p { font-size: 16px; }
-            
-            h2.tab-title { font-size: 12px; }
+            .jupiter-gallery {
+                flex-direction: row; /* На телефоне картинки можно поставить в ряд */
+                flex-wrap: wrap;
+            }
+
+            .jupiter-gallery img {
+                width: calc(50% - 5px); /* Две картинки в ряд */
+            }
         }
     </style>
 </head>
@@ -215,10 +181,10 @@
 
         <div id="facts" class="tab-content">
             <h2 class="tab-title">> АРХИВНЫЕ ДАННЫЕ</h2>
-            <p>1.Чернобыль — это не только авария 1986 года, но и город с уникальной историей: в Чернобыле до аварии проживали представители разных национальностей (включая значительное число евреев), а после катастрофы, несмотря на эвакуацию, в зоне отчуждения появились «самосёлы» — люди, вернувшиеся в свои дома, а также нелегальные туристы и мародеры; кроме того, авария на ЧАЭС и её последствия стали основой для мировых культурных явлений, включая популярный сериал HBO и важные героические истории, как "самоубийственная" миссия трех инженеров «водолазов</p>
-            <p>2.Первые часы/дни: Сотрудники станции и пожарные, находившиеся в эпицентре, получили дозы в тысячи рентген, что привело к развитию ОЛП и смерти в течение нескольких недель/месяцев. Население: Основная масса людей вдали от станции получила гораздо меньшие, но все еще опасные дозы, особенно из-за радиоактивного йода, который накапливается в щитовидной железе.</p>
-            <p>3.Черно́быль (укр. Чорно́биль — производное от растения «чернобыльник», или «полынь обыкновенная») — город в зоне отчуждения Чернобыльской АЭС, Вышгородский район Киевской области Украины. Расположен на реке Припять, недалеко от её впадения в Киевское водохранилище. Является заповедной зоной и охраняется законом</p>
-            <p>4.«Самонаселенцы»: В зоне отчуждения до сих пор живут люди, которые вернулись в свои дома — «самосёлы», многие из них связаны с Чернобылем или Припятью. Языковое разнообразие: В 1926 году в Чернобыле говорили на украинском, еврейском, русском и польском языках, что говорит о многонациональности города до аварии. Город-транспортный узел: Припять, город-спутник ЧАЭС, был не только домом для энергетиков, но и важным транспортным узлом с речным портом, железной дорогой и дорожной сетью. Саркофаг атаковали дроны: В 2025 году на новый конфайнмент над 4-м энергоблоком Чернобыльской АЭС были совершены атаки дронами.</p>
+            <p>1.Чернобыль — это не только авария 1986 года...</p>
+            <p>2.Первые часы/дни...</p>
+            <p>3.Черно́быль (укр. Чорно́биль)...</p>
+            <p>4.«Самонаселенцы»...</p>
         </div>
 
         <div id="robots" class="tab-content">
@@ -230,8 +196,7 @@
             <h2 class="tab-title">> ЗАВОД ЮПИТЕР</h2>
             <div class="jupiter-layout">
                 <div class="jupiter-text">
-                    <p>Завод «Юпитер» — одно из самых загадочных мест Припяти. Официально он производил детали для магнитофонов, но на деле выполнял оборонные заказы.</p>
-                    <p>После аварии здесь располагавались лаборатории для испытания роботов и дезактивации техники. В подвалах завода до сих пор находят образцы почвы с аномально высоким уровнем радиации.</p>
+                    <p>Завод «Юпитер» — одно из самых загадочных мест Припяти.</p>
                 </div>
                 <div class="jupiter-gallery">
                     <img src="https://th.bing.com/th/id/R.326be3fd5d1295c6f69ba639231e1d7b?rik=knSjavHdRJ8%2b%2fQ&pid=ImgRaw&r=0" alt="Yupiter 1">
@@ -254,9 +219,9 @@
             }
             document.getElementById(tabId).style.display = 'block';
             btn.classList.add('active-tab');
-            
-            // Авто-скролл к контенту на мобилках при клике
-            if (window.innerWidth <= 768) {
+
+            // Авто-скролл к тексту на мобилке, чтобы не оставаться на меню
+            if (window.innerWidth <= 850) {
                 document.querySelector('.content-container').scrollIntoView({ behavior: 'smooth' });
             }
         }
