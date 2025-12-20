@@ -26,7 +26,7 @@
         .content-container { flex-grow: 1; padding: 40px 60px; background: #050505; overflow-y: auto; position: relative; }
         .chat-wrapper { display: flex; flex-direction: column; height: 400px; background: #080808; border: 1px solid #111; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 15px; list-style: none; margin: 0; }
-        .chat-msg-item { margin-bottom: 10px; font-size: 13px; border-left: 1px solid #1a441a; padding-left: 10px; word-break: break-all; }
+        .chat-msg-item { margin-bottom: 10px; font-size: 13px; border-left: 1px solid #1a441a; padding-left: 10px; word-break: break-all; position: relative; }
         .chat-user-link { color: #ffaa00; cursor: pointer; text-decoration: underline; font-weight: bold; }
         .chat-input-box { display: flex; border-top: 1px solid #111; padding: 10px; background: #0a0a0a; }
         .chat-input-box input { flex: 1; background: transparent; border: none; border-bottom: 1px solid #1a441a; color: #22ff22; padding: 5px; outline: none; font-family: 'Roboto Mono'; min-width: 0; }
@@ -59,6 +59,13 @@
         .auth-form { margin-top: 20px; border-top: 1px solid #111; padding-top: 20px; }
         .auth-form input { display: block; width: 100%; background: #000; border: 1px solid #1a441a; color: #22ff22; padding: 10px; margin-bottom: 10px; font-family: 'Roboto Mono'; }
         .btn-action { background: #22ff22; color: #000; border: none; padding: 10px 20px; font-family: 'Press Start 2P'; font-size: 8px; cursor: pointer; }
+
+        /* Специфические стили для подачи заявок */
+        .submit-form-box { border: 1px solid #1a441a; padding: 20px; background: #080808; }
+        .submit-form-box select, .submit-form-box textarea, .submit-form-box input {
+            width: 100%; background: #000; border: 1px solid #1a441a; color: #22ff22; padding: 10px; margin-bottom: 15px; font-family: 'Roboto Mono';
+        }
+        .file-label { color: #ffaa00; font-size: 10px; display: block; margin-bottom: 5px; }
 
         @media screen and (max-width: 900px) {
             body { overflow-y: auto; height: auto; width: 100%; }
@@ -95,6 +102,7 @@
             </div>
             <div class="sidebar-divider"></div>
             <div class="nav-group">
+                <button class="tab-button" onclick="openTab('submit-article', this)">+ ПОДАТЬ СТАТЬЮ</button>
                 <button class="tab-button" onclick="openTab('network-chat', this)">Общий канал</button>
                 <button class="tab-button" onclick="openTab('profile-tab', this)">Профиль</button>
                 <button class="tab-button" onclick="openTab('community', this)">Комьюнити</button>
@@ -107,13 +115,33 @@
         <div class="content-container">
             <h1>WikiChernobyl</h1>
 
+            <div id="submit-article" class="tab-content">
+                <h2 class="tab-title">> ЦЕНТР ПОДАЧИ ДАННЫХ</h2>
+                <div class="submit-form-box">
+                    <label class="file-label">ОТДЕЛ АРХИВАЦИИ:</label>
+                    <select id="sub-tab">
+                        <option value="catastrophe">КАТАСТРОФА</option>
+                        <option value="facts">АРХИВ</option>
+                        <option value="robots">РОБОТЫ</option>
+                        <option value="jupiter">ЗАВОД ЮПИТЕР</option>
+                        <option value="tubers">ЮТУБЕРЫ</option>
+                        <option value="medals">МЕДАЛИ</option>
+                        <option value="flags">ФЛАГИ</option>
+                    </select>
+                    <input type="text" id="sub-title" placeholder="ЗАГОЛОВОК СТАТЬИ">
+                    <textarea id="sub-text" rows="5" placeholder="ТЕКСТ СТАТЬИ..."></textarea>
+                    <label class="file-label">ЗАГРУЗИТЬ ФОТО (ИЗ ПАМЯТИ):</label>
+                    <input type="file" id="sub-file" accept="image/*">
+                    <button class="btn-action" onclick="sendFullArticle()">ОТПРАВИТЬ НА ПРОВЕРКУ</button>
+                </div>
+            </div>
+
             <div id="profile-tab" class="tab-content">
                 <h2 class="tab-title">> КПК: ЛИЧНЫЕ ДАННЫЕ</h2>
                 <div id="profile-view"></div>
             </div>
 
             <div id="catastrophe" class="tab-content active">
-                <button class="add-article-btn" onclick="proposeArticle('catastrophe')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> ИСТОРИЯ ОБЪЕКТА</h2>
                 <div id="content-catastrophe"></div>
             </div>
@@ -130,43 +158,17 @@
             </div>
 
             <div id="facts" class="tab-content"> 
-                <button class="add-article-btn" onclick="proposeArticle('facts')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> АРХИВНЫЕ ДАННЫЕ</h2> 
                 <div id="admin-moderation-area"></div> 
                 <div id="content-facts"></div>
             </div>
 
-            <div id="medals" class="tab-content"> 
-                <button class="add-article-btn" onclick="proposeArticle('medals')">[+] ДОБАВИТЬ СТАТЬЮ</button>
-                <h2 class="tab-title">> МЕДАЛИ</h2> 
-                <div id="content-medals"></div>
-            </div>
-
-            <div id="flags" class="tab-content"> 
-                <button class="add-article-btn" onclick="proposeArticle('flags')">[+] ДОБАВИТЬ СТАТЬЮ</button>
-                <h2 class="tab-title">> ФЛАГИ</h2> 
-                <div id="content-flags"></div>
-            </div>
-
-            <div id="tubers" class="tab-content"> 
-                <button class="add-article-btn" onclick="proposeArticle('tubers')">[+] ДОБАВИТЬ СТАТЬЮ</button>
-                <h2 class="tab-title">> ЮТУБЕРЫ</h2> 
-                <div id="content-tubers"></div>
-            </div>
-
+            <div id="medals" class="tab-content"> <h2 class="tab-title">> МЕДАЛИ</h2> <div id="content-medals"></div> </div>
+            <div id="flags" class="tab-content"> <h2 class="tab-title">> ФЛАГИ</h2> <div id="content-flags"></div> </div>
+            <div id="tubers" class="tab-content"> <h2 class="tab-title">> ЮТУБЕРЫ</h2> <div id="content-tubers"></div> </div>
             <div id="community" class="tab-content"> <h2 class="tab-title">> COMMUNITY_HUB</h2> <p>Подключение к узлу...</p> </div>
-
-            <div id="robots" class="tab-content"> 
-                <button class="add-article-btn" onclick="proposeArticle('robots')">[+] ДОБАВИТЬ СТАТЬЮ</button>
-                <h2 class="tab-title">> РОБОТОТЕХНИКА</h2> 
-                <div id="content-robots"></div>
-            </div>
-
-            <div id="jupiter" class="tab-content"> 
-                <button class="add-article-btn" onclick="proposeArticle('jupiter')">[+] ДОБАВИТЬ СТАТЬЮ</button>
-                <h2 class="tab-title">> ЗАВОД ЮПИТЕР</h2> 
-                <div id="content-jupiter"></div>
-            </div>
+            <div id="robots" class="tab-content"> <h2 class="tab-title">> РОБОТОТЕХНИКА</h2> <div id="content-robots"></div> </div>
+            <div id="jupiter" class="tab-content"> <h2 class="tab-title">> ЗАВОД ЮПИТЕР</h2> <div id="content-jupiter"></div> </div>
         </div>
 
         <div class="right-panel">
@@ -204,15 +206,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- ТВОИ ПЕРЕМЕННЫЕ ---
         const ADMIN_ID = "DENIS"; 
         let allUsers = {};
         let currentSession = JSON.parse(localStorage.getItem('stalker_current_session')) || { name: "GUEST_STALKER", isAuth: false };
-        let chatHistory = [];
         let approvedArticles = {};
         let pendingArticles = {};
 
-        // --- СИНХРОНИЗАЦИЯ С FIREBASE ---
         onValue(ref(db, 'users'), (snapshot) => {
             allUsers = snapshot.val() || {};
             updateAccountUI();
@@ -220,8 +219,7 @@
 
         onValue(ref(db, 'chat'), (snapshot) => {
             const data = snapshot.val();
-            chatHistory = data ? Object.values(data) : [];
-            renderChat();
+            renderChat(data);
         });
 
         onValue(ref(db, 'articles'), (snapshot) => {
@@ -234,25 +232,19 @@
             if(currentSession.name === ADMIN_ID) renderAdminPanel();
         });
 
-        // --- ТВОИ ОРИГИНАЛЬНЫЕ ФУНКЦИИ (АДАПТИРОВАНЫ ПОД FIREBASE) ---
         window.updateAccountUI = function() {
             const user = (currentSession.isAuth && allUsers[currentSession.name]) ? allUsers[currentSession.name] : { name: "GUEST_STALKER", count: 0, rank: "НОВИЧОК", regDate: Date.now() };
-            
             document.getElementById('user-id').innerText = currentSession.isAuth ? currentSession.name : "GUEST_STALKER";
             document.getElementById('user-msg-count').innerText = user.count || 0;
             document.getElementById('user-status').innerText = currentSession.isAuth ? "ONLINE" : "OFFLINE";
-            
             let minutes = Math.floor((Date.now() - (user.regDate || Date.now())) / 60000);
             document.getElementById('user-time').innerText = minutes + "m";
-
             let rank = "НОВИЧОК";
             if(user.name === ADMIN_ID) rank = "АДМИНИСТРАТОР";
             else if(user.count >= 20) rank = "ЛЕГЕНДА";
             else if(user.count >= 10) rank = "СТАЛКЕР";
             document.getElementById('user-rank').innerText = rank;
-
             document.getElementById('status-circle').className = currentSession.isAuth ? "auth-circle active" : "auth-circle";
-            
             renderProfile();
         }
 
@@ -272,7 +264,6 @@
             let p = document.getElementById('auth-pass').value;
             if(n.length < 5 || p.length < 8) return alert("Логин 5+, Пароль 8+");
             if(allUsers[n]) return alert("Позывной занят");
-            
             set(ref(db, 'users/' + n), { name: n, password: p, count: 0, rank: "НОВИЧОК", regDate: Date.now(), isBanned: false });
             currentSession = { name: n, isAuth: true };
             localStorage.setItem('stalker_current_session', JSON.stringify(currentSession));
@@ -284,34 +275,57 @@
             if(text !== "") {
                 if(!currentSession.isAuth) return alert("Сначала авторизуйтесь!");
                 if(allUsers[currentSession.name]?.isBanned) return alert("Вы забанены!");
-                
                 push(ref(db, 'chat'), { user: currentSession.name, text: text, time: Date.now() });
                 update(ref(db, 'users/' + currentSession.name), { count: (allUsers[currentSession.name].count || 0) + 1 });
                 input.value = "";
             }
         }
 
-        window.proposeArticle = function(tab) {
-            if(!currentSession.isAuth) return alert("Авторизуйтесь для подачи статьи!");
-            let title = prompt("Заголовок статьи:");
-            let text = prompt("Текст статьи:");
-            let imgUrl = prompt("URL изображения:");
-            if(title && text) {
-                push(ref(db, 'pending'), {
-                    author: currentSession.name,
-                    tab: tab,
-                    title: title,
-                    text: text,
-                    img: imgUrl || "",
-                    id: Date.now()
-                });
-                alert("Отправлено DENIS на проверку.");
+        window.deleteChatMessage = function(key) {
+            if(confirm("Удалить это сообщение?")) {
+                remove(ref(db, 'chat/' + key));
             }
+        }
+
+        window.sendFullArticle = function() {
+            if(!currentSession.isAuth) return alert("Авторизуйтесь!");
+            const tab = document.getElementById('sub-tab').value;
+            const title = document.getElementById('sub-title').value;
+            const text = document.getElementById('sub-text').value;
+            const fileInput = document.getElementById('sub-file');
+
+            if(!title || !text) return alert("Заполните заголовок и текст!");
+
+            if(fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    push(ref(db, 'pending'), {
+                        author: currentSession.name, tab: tab, title: title, text: text, img: base64, id: Date.now()
+                    });
+                    alert("Отправлено на проверку!");
+                    clearSubmitForm();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                push(ref(db, 'pending'), { author: currentSession.name, tab: tab, title: title, text: text, img: "", id: Date.now() });
+                alert("Отправлено без фото.");
+                clearSubmitForm();
+            }
+        }
+
+        function clearSubmitForm() {
+            document.getElementById('sub-title').value = "";
+            document.getElementById('sub-text').value = "";
+            document.getElementById('sub-file').value = "";
         }
 
         window.renderArticles = function() {
             const tabs = ['catastrophe', 'facts', 'robots', 'jupiter', 'tubers', 'medals', 'flags'];
-            tabs.forEach(t => document.getElementById('content-' + t).innerHTML = "");
+            tabs.forEach(t => {
+                const el = document.getElementById('content-' + t);
+                if(el) el.innerHTML = "";
+            });
 
             Object.keys(approvedArticles).forEach(key => {
                 const art = approvedArticles[key];
@@ -332,8 +346,7 @@
         window.renderAdminPanel = function() {
             const area = document.getElementById('admin-moderation-area');
             if(!area) return;
-            area.innerHTML = "<div class='admin-mod-panel'><h2 style='font-size:10px; color:#ffaa00'>МОДЕРАЦИЯ</h2></div>";
-            
+            area.innerHTML = "<div class='admin-mod-panel'><h2 style='font-size:10px; color:#ffaa00'>МОДЕРАЦИЯ СТАТЕЙ</h2></div>";
             Object.keys(pendingArticles).forEach(key => {
                 const p = pendingArticles[key];
                 const item = document.createElement('div');
@@ -353,14 +366,17 @@
         };
         window.reject = (key) => remove(ref(db, 'pending/' + key));
 
-        window.renderChat = function() {
+        window.renderChat = function(data) {
             const list = document.getElementById('comm-list');
             list.innerHTML = "";
-            chatHistory.forEach(msg => {
+            if(!data) return;
+            Object.keys(data).forEach(key => {
+                const msg = data[key];
                 const li = document.createElement('li');
                 li.className = 'chat-msg-item';
                 let color = (msg.user === ADMIN_ID) ? "#ff0000" : "#ffaa00";
-                li.innerHTML = `<span class="chat-user-link" style="color:${color}" onclick="viewProfile('${msg.user}')">${msg.user}</span>: <span style="color:#888">${msg.text}</span>`;
+                let delBtn = (currentSession.name === ADMIN_ID) ? `<span onclick="deleteChatMessage('${key}')" style="color:red; cursor:pointer; margin-left:10px;">[X]</span>` : "";
+                li.innerHTML = `<span class="chat-user-link" style="color:${color}" onclick="viewProfile('${msg.user}')">${msg.user}</span>: <span style="color:#888">${msg.text}</span> ${delBtn}`;
                 list.appendChild(li);
             });
             list.scrollTop = list.scrollHeight;
@@ -397,7 +413,8 @@
         window.openTab = function(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active-tab'));
-            document.getElementById(tabId).classList.add('active');
+            const target = document.getElementById(tabId);
+            if(target) target.classList.add('active');
             if(btn) btn.classList.add('active-tab');
         }
 
