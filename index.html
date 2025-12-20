@@ -3,7 +3,7 @@
 <head>
     <title>ChernobylWiki | Terminal 0.1</title>
     <meta charset='UTF-8'>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
@@ -127,6 +127,7 @@
             font-size: 13px;
             border-left: 1px solid #1a441a;
             padding-left: 10px;
+            word-break: break-all;
         }
         .chat-user-link {
             color: #ffaa00;
@@ -150,16 +151,18 @@
             padding: 5px;
             outline: none;
             font-family: 'Roboto Mono';
+            min-width: 0;
         }
         .chat-input-box button {
             background: #1a441a;
             color: #000;
             border: none;
             margin-left: 10px;
-            padding: 5px 15px;
+            padding: 5px 10px;
             cursor: pointer;
             font-family: 'Press Start 2P';
             font-size: 8px;
+            white-space: nowrap;
         }
 
         /* ПРАВАЯ ПАНЕЛЬ */
@@ -256,54 +259,75 @@
 
         /* --- ОБНОВЛЕННОЕ МАСШТАБИРОВАНИЕ ДЛЯ ТЕЛЕФОНОВ --- */
         @media screen and (max-width: 900px) {
+            body {
+                overflow-y: auto;
+                height: auto;
+                width: 100%;
+            }
             .main-container {
                 flex-direction: column;
-                overflow-y: auto;
+                overflow: visible;
+                height: auto;
             }
             .sidebar {
                 width: 100%;
                 min-width: 100%;
                 border-right: none;
                 border-bottom: 1px solid #111;
-                padding: 15px;
+                padding: 20px;
                 height: auto;
             }
-            .sidebar-photo, .right-panel, .system-status-bottom {
-                display: none;
+            .sidebar-photo {
+                display: block; /* По просьбе пользователя возвращаем всё */
+                margin-top: 20px;
+                max-width: 200px;
+            }
+            .right-panel {
+                width: 100%;
+                min-width: 100%;
+                border-left: none;
+                border-top: 1px solid #111;
+                padding: 20px;
+                order: 3; /* Сдвигаем вниз после контента */
+            }
+            .system-status-bottom {
+                position: static;
+                padding: 10px;
+                text-align: center;
+                background: #000;
             }
             .content-container {
                 padding: 20px;
-                overflow-y: visible;
+                overflow: visible;
                 height: auto;
+                order: 2;
             }
             h1 {
-                font-size: 16px;
+                font-size: 18px;
                 margin-bottom: 20px;
                 text-align: center;
             }
             .nav-group {
                 flex-direction: row;
                 flex-wrap: wrap;
-                justify-content: center;
-                gap: 10px;
+                justify-content: flex-start;
+                gap: 8px;
             }
             .tab-button {
-                font-size: 10px;
-                padding: 5px 10px;
+                font-size: 9px;
+                padding: 8px;
                 border: 1px solid #1a441a;
+                flex: 1 1 auto;
+                text-align: center;
             }
             .tab-button.active-tab {
                 border-left: 1px solid #22ff22;
                 background: #0a1a0a;
             }
-            body {
-                overflow-y: auto;
-            }
             .chat-wrapper {
-                height: 300px;
+                height: 350px;
             }
             .footer-terminal {
-                position: relative;
                 font-size: 9px;
             }
         }
@@ -354,7 +378,7 @@
                 <div class="chat-wrapper">
                     <ul class="chat-messages" id="comm-list"></ul>
                     <div class="chat-input-box">
-                        <input type="text" id="comm-input" placeholder="Введите сообщение в сеть...">
+                        <input type="text" id="comm-input" placeholder="Введите сообщение...">
                         <button onclick="addComment()">ОТПРАВИТЬ</button>
                     </div>
                 </div>
