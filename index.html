@@ -6,348 +6,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* --- ВСЕ ТВОИ ОРИГИНАЛЬНЫЕ СТИЛИ БЕЗ ИЗМЕНЕНИЙ --- */
         * { box-sizing: border-box; }
-        body {
-            background-color: #050505;
-            color: #22ff22;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Roboto Mono', monospace;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        /* ЭФФЕКТЫ */
-        body::after {
-            content: " ";
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            background-size: 100% 3px;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-
-        .scan-line {
-            width: 100%; height: 2px; z-index: 999;
-            background: rgba(34, 255, 34, 0.2);
-            position: absolute; top: 0;
-            animation: scanMove 10s linear infinite;
-            pointer-events: none;
-        }
+        body { background-color: #050505; color: #22ff22; margin: 0; display: flex; flex-direction: column; font-family: 'Roboto Mono', monospace; height: 100vh; width: 100vw; overflow: hidden; position: relative; }
+        .main-container { display: flex; flex: 1; overflow: hidden; width: 100%; }
+        body::after { content: " "; position: fixed; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); background-size: 100% 3px; z-index: 1000; pointer-events: none; opacity: 0.3; }
+        .scan-line { width: 100%; height: 2px; z-index: 999; background: rgba(34, 255, 34, 0.2); position: absolute; top: 0; animation: scanMove 10s linear infinite; pointer-events: none; }
         @keyframes scanMove { 0% { top: 0%; } 100% { top: 100%; } }
-
-        /* САЙДБАР */
-        .sidebar {
-            width: 280px;
-            min-width: 280px;
-            background-color: #080808;
-            border-right: 1px solid #111;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            z-index: 10;
-        }
-
-        .sidebar h2 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px; color: #444; margin-bottom: 20px;
-        }
-
+        .sidebar { width: 280px; min-width: 280px; background-color: #080808; border-right: 1px solid #111; padding: 30px 20px; display: flex; flex-direction: column; z-index: 10; }
+        .sidebar h2 { font-family: 'Press Start 2P', cursive; font-size: 10px; color: #444; margin-bottom: 20px; }
         .nav-group { display: flex; flex-direction: column; gap: 5px; }
-
-        .sidebar-divider {
-            height: 1px; background: #111; margin: 20px 0;
-            position: relative;
-        }
-        .sidebar-divider::after {
-            content: "COMMUNITY_OS"; position: absolute; top: -5px; left: 10px;
-            background: #080808; padding: 0 5px; font-size: 8px; color: #224422;
-        }
-
-        .tab-button {
-            background: transparent; color: #1a661a; border: none;
-            padding: 10px 0; font-family: 'Roboto Mono', monospace;
-            font-size: 13px; text-transform: uppercase; cursor: pointer;
-            transition: 0.3s; text-align: left;
-        }
+        .sidebar-divider { height: 1px; background: #111; margin: 20px 0; position: relative; }
+        .sidebar-divider::after { content: "COMMUNITY_OS"; position: absolute; top: -5px; left: 10px; background: #080808; padding: 0 5px; font-size: 8px; color: #224422; }
+        .tab-button { background: transparent; color: #1a661a; border: none; padding: 10px 0; font-family: 'Roboto Mono', monospace; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.3s; text-align: left; }
         .tab-button:hover, .tab-button.active-tab { color: #22ff22; padding-left: 5px; }
         .tab-button.active-tab { border-left: 2px solid #22ff22; padding-left: 10px; }
-
-        .sidebar-photo {
-            margin-top: auto;
-            width: 100%;
-            border: 1px solid #1a441a;
-            padding: 2px;
-            background: #000;
-        }
-        .sidebar-photo img {
-            width: 100%;
-            display: block;
-            filter: grayscale(1) brightness(0.8);
-        }
-
-        /* КОНТЕНТ */
-        .content-container {
-            flex-grow: 1;
-            padding: 40px 60px;
-            background: #050505;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        /* --- СТИЛИ ЧАТА --- */
-        .chat-wrapper {
-            display: flex;
-            flex-direction: column;
-            height: 400px;
-            background: #080808;
-            border: 1px solid #111;
-        }
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            list-style: none;
-            margin: 0;
-        }
-        .chat-msg-item {
-            margin-bottom: 10px;
-            font-size: 13px;
-            border-left: 1px solid #1a441a;
-            padding-left: 10px;
-            word-break: break-all;
-        }
-        .chat-user-link {
-            color: #ffaa00;
-            cursor: pointer;
-            text-decoration: underline;
-            font-weight: bold;
-        }
-        .chat-user-link:hover { color: #fff; }
-        .chat-input-box {
-            display: flex;
-            border-top: 1px solid #111;
-            padding: 10px;
-            background: #0a0a0a;
-        }
-        .chat-input-box input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #1a441a;
-            color: #22ff22;
-            padding: 5px;
-            outline: none;
-            font-family: 'Roboto Mono';
-            min-width: 0;
-        }
-        .chat-input-box button {
-            background: #1a441a;
-            color: #000;
-            border: none;
-            margin-left: 10px;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-family: 'Press Start 2P';
-            font-size: 8px;
-            white-space: nowrap;
-        }
-
-        /* ПРАВАЯ ПАНЕЛЬ */
-        .right-panel {
-            width: 300px;
-            min-width: 300px;
-            border-left: 1px solid #111;
-            padding: 30px 20px;
-            background: #070707;
-            font-size: 10px;
-            color: #1a441a;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* АККАУНТ ИНФО */
-        .user-account-box {
-            border: 1px solid #22ff22;
-            padding: 10px;
-            margin-bottom: 10px;
-            color: #22ff22;
-            position: relative;
-            line-height: 1.5;
-        }
-
-        .auth-circle {
-            width: 12px; height: 12px;
-            background: #113311;
-            border-radius: 50%;
-            position: absolute;
-            top: 10px; right: 10px;
-            cursor: pointer;
-            border: 1px solid #22ff22;
-        }
+        .sidebar-photo { margin-top: auto; width: 100%; border: 1px solid #1a441a; padding: 2px; background: #000; }
+        .sidebar-photo img { width: 100%; display: block; filter: grayscale(1) brightness(0.8); }
+        .content-container { flex-grow: 1; padding: 40px 60px; background: #050505; overflow-y: auto; position: relative; }
+        .chat-wrapper { display: flex; flex-direction: column; height: 400px; background: #080808; border: 1px solid #111; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; list-style: none; margin: 0; }
+        .chat-msg-item { margin-bottom: 10px; font-size: 13px; border-left: 1px solid #1a441a; padding-left: 10px; word-break: break-all; }
+        .chat-user-link { color: #ffaa00; cursor: pointer; text-decoration: underline; font-weight: bold; }
+        .chat-input-box { display: flex; border-top: 1px solid #111; padding: 10px; background: #0a0a0a; }
+        .chat-input-box input { flex: 1; background: transparent; border: none; border-bottom: 1px solid #1a441a; color: #22ff22; padding: 5px; outline: none; font-family: 'Roboto Mono'; min-width: 0; }
+        .chat-input-box button { background: #1a441a; color: #000; border: none; margin-left: 10px; padding: 5px 10px; cursor: pointer; font-family: 'Press Start 2P'; font-size: 8px; white-space: nowrap; }
+        .right-panel { width: 300px; min-width: 300px; border-left: 1px solid #111; padding: 30px 20px; background: #070707; font-size: 10px; color: #1a441a; display: flex; flex-direction: column; gap: 20px; }
+        .user-account-box { border: 1px solid #22ff22; padding: 10px; margin-bottom: 10px; color: #22ff22; position: relative; line-height: 1.5; }
+        .auth-circle { width: 12px; height: 12px; background: #113311; border-radius: 50%; position: absolute; top: 10px; right: 10px; cursor: pointer; border: 1px solid #22ff22; }
         .auth-circle.active { background: #22ff22; box-shadow: 0 0 5px #22ff22; }
-
         .data-box { border: 1px solid #111; padding: 10px; }
         .graph-line { height: 2px; background: #1a441a; margin-top: 5px; width: 0%; animation: grow 3s infinite alternate; }
         @keyframes grow { from { width: 10%; } to { width: 90%; } }
-
         h1 { font-family: 'Press Start 2P', cursive; color: #ffaa00; font-size: 22px; margin-bottom: 40px; }
-
         .tab-content { display: none; max-width: 700px; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         h2.tab-title { color: #22ff22; font-size: 12px; font-family: 'Press Start 2P', cursive; margin-bottom: 25px; }
         p { font-size: 15px; line-height: 1.7; color: #888; }
-
-        .footer-terminal {
-            background: #000;
-            border-top: 1px solid #111;
-            padding: 10px;
-            text-align: center;
-            font-size: 11px;
-            color: #444;
-            z-index: 1100;
-        }
+        .footer-terminal { background: #000; border-top: 1px solid #111; padding: 10px; text-align: center; font-size: 11px; color: #444; z-index: 1100; }
         .footer-terminal span { color: #226622; cursor: pointer; text-decoration: underline; }
-
-        .system-status-bottom {
-            position: fixed; bottom: 55px; right: 320px;
-            font-size: 9px; color: #113311; text-transform: uppercase;
-        }
-
-        /* НОВЫЕ СТИЛИ ДЛЯ СТАТЕЙ */
-        .add-article-btn {
-            background: #1a441a; color: #22ff22; border: 1px solid #22ff22;
-            padding: 10px; font-family: 'Press Start 2P'; font-size: 8px;
-            cursor: pointer; margin-bottom: 20px; display: block;
-        }
-        .article-card {
-            border: 1px solid #1a441a; padding: 15px; margin-bottom: 15px;
-            background: #080808;
-            position: relative;
-        }
-        .article-img {
-            max-width: 100%; border: 1px solid #22ff22; margin: 10px 0;
-            display: block; filter: sepia(0.5) brightness(0.8);
-        }
-        .admin-mod-panel {
-            border: 1px dashed #ffaa00; padding: 10px; margin-top: 20px;
-        }
-        .mod-item {
-            font-size: 12px; border-bottom: 1px solid #222; padding: 10px 0;
-            background: #0a0a0a; margin-bottom: 5px; padding: 10px;
-        }
-        .btn-delete {
-            background: #aa0000; color: white; border: none; font-size: 8px;
-            font-family: 'Press Start 2P'; cursor: pointer; padding: 5px;
-            margin-top: 5px;
-        }
-
-        /* --- СТИЛИ ПРОФИЛЯ --- */
-        .profile-card {
-            border: 1px solid #22ff22; padding: 20px; background: #0a0a0a;
-        }
-        .profile-stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;
-        }
+        .system-status-bottom { position: fixed; bottom: 55px; right: 320px; font-size: 9px; color: #113311; text-transform: uppercase; }
+        .add-article-btn { background: #1a441a; color: #22ff22; border: 1px solid #22ff22; padding: 10px; font-family: 'Press Start 2P'; font-size: 8px; cursor: pointer; margin-bottom: 20px; display: block; }
+        .article-card { border: 1px solid #1a441a; padding: 15px; margin-bottom: 15px; background: #080808; position: relative; }
+        .article-img { max-width: 100%; border: 1px solid #22ff22; margin: 10px 0; display: block; filter: sepia(0.5) brightness(0.8); }
+        .admin-mod-panel { border: 1px dashed #ffaa00; padding: 10px; margin-top: 20px; }
+        .mod-item { font-size: 12px; border-bottom: 1px solid #222; padding: 10px; background: #0a0a0a; margin-bottom: 5px; }
+        .btn-delete { background: #aa0000; color: white; border: none; font-size: 8px; font-family: 'Press Start 2P'; cursor: pointer; padding: 5px; margin-top: 5px; }
+        .profile-card { border: 1px solid #22ff22; padding: 20px; background: #0a0a0a; }
+        .profile-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .stat-item { border: 1px solid #113311; padding: 10px; font-size: 12px; }
         .auth-form { margin-top: 20px; border-top: 1px solid #111; padding-top: 20px; }
-        .auth-form input {
-            display: block; width: 100%; background: #000; border: 1px solid #1a441a;
-            color: #22ff22; padding: 10px; margin-bottom: 10px; font-family: 'Roboto Mono';
-        }
-        .btn-action {
-            background: #22ff22; color: #000; border: none; padding: 10px 20px;
-            font-family: 'Press Start 2P'; font-size: 8px; cursor: pointer;
-        }
+        .auth-form input { display: block; width: 100%; background: #000; border: 1px solid #1a441a; color: #22ff22; padding: 10px; margin-bottom: 10px; font-family: 'Roboto Mono'; }
+        .btn-action { background: #22ff22; color: #000; border: none; padding: 10px 20px; font-family: 'Press Start 2P'; font-size: 8px; cursor: pointer; }
 
-        /* --- ОБНОВЛЕННОЕ МАСШТАБИРОВАНИЕ ДЛЯ ТЕЛЕФОНОВ --- */
         @media screen and (max-width: 900px) {
-            body {
-                overflow-y: auto;
-                height: auto;
-                width: 100%;
-            }
-            .main-container {
-                flex-direction: column;
-                overflow: visible;
-                height: auto;
-            }
-            .sidebar {
-                width: 100%;
-                min-width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #111;
-                padding: 20px;
-                height: auto;
-            }
-            .sidebar-photo {
-                display: block; 
-                margin-top: 20px;
-                max-width: 200px;
-            }
-            .right-panel {
-                width: 100%;
-                min-width: 100%;
-                border-left: none;
-                border-top: 1px solid #111;
-                padding: 20px;
-                order: 3;
-            }
-            .system-status-bottom {
-                position: static;
-                padding: 10px;
-                text-align: center;
-                background: #000;
-            }
-            .content-container {
-                padding: 20px;
-                overflow: visible;
-                height: auto;
-                order: 2;
-            }
-            h1 {
-                font-size: 18px;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-            .nav-group {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: flex-start;
-                gap: 8px;
-            }
-            .tab-button {
-                font-size: 9px;
-                padding: 8px;
-                border: 1px solid #1a441a;
-                flex: 1 1 auto;
-                text-align: center;
-            }
-            .tab-button.active-tab {
-                border-left: 1px solid #22ff22;
-                background: #0a1a0a;
-            }
-            .chat-wrapper {
-                height: 350px;
-            }
-            .footer-terminal {
-                font-size: 9px;
-            }
+            body { overflow-y: auto; height: auto; width: 100%; }
+            .main-container { flex-direction: column; overflow: visible; height: auto; }
+            .sidebar { width: 100%; min-width: 100%; border-right: none; border-bottom: 1px solid #111; padding: 20px; height: auto; }
+            .sidebar-photo { display: block; margin-top: 20px; max-width: 200px; }
+            .right-panel { width: 100%; min-width: 100%; border-left: none; border-top: 1px solid #111; padding: 20px; order: 3; }
+            .system-status-bottom { position: static; padding: 10px; text-align: center; background: #000; }
+            .content-container { padding: 20px; overflow: visible; height: auto; order: 2; }
+            h1 { font-size: 18px; margin-bottom: 20px; text-align: center; }
+            .nav-group { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 8px; }
+            .tab-button { font-size: 9px; padding: 8px; border: 1px solid #1a441a; flex: 1 1 auto; text-align: center; }
+            .tab-button.active-tab { border-left: 1px solid #22ff22; background: #0a1a0a; }
+            .chat-wrapper { height: 350px; }
+            .footer-terminal { font-size: 9px; }
         }
     </style>
 </head>
@@ -367,15 +93,12 @@
                 <button class="tab-button" onclick="openTab('medals', this)">Медали</button>
                 <button class="tab-button" onclick="openTab('flags', this)">Флаги</button>
             </div>
-
             <div class="sidebar-divider"></div>
-
             <div class="nav-group">
                 <button class="tab-button" onclick="openTab('network-chat', this)">Общий канал</button>
                 <button class="tab-button" onclick="openTab('profile-tab', this)">Профиль</button>
                 <button class="tab-button" onclick="openTab('community', this)">Комьюнити</button>
             </div>
-
             <div class="sidebar-photo">
                 <img src="https://s3.stroi-news.ru/img/znak-radiatsiya-kartinki-26.jpg" alt="Sector">
             </div>
@@ -386,16 +109,13 @@
 
             <div id="profile-tab" class="tab-content">
                 <h2 class="tab-title">> КПК: ЛИЧНЫЕ ДАННЫЕ</h2>
-                <div id="profile-view">
-                    </div>
+                <div id="profile-view"></div>
             </div>
 
             <div id="catastrophe" class="tab-content active">
                 <button class="add-article-btn" onclick="proposeArticle('catastrophe')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> ИСТОРИЯ ОБЪЕКТА</h2>
-                <div id="content-catastrophe">
-                    <p>Основные данные по инциденту 1986 года загружены в буфер.</p>
-                </div>
+                <div id="content-catastrophe"></div>
             </div>
 
             <div id="network-chat" class="tab-content">
@@ -412,25 +132,26 @@
             <div id="facts" class="tab-content"> 
                 <button class="add-article-btn" onclick="proposeArticle('facts')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> АРХИВНЫЕ ДАННЫЕ</h2> 
-                <div id="admin-moderation-area"></div> <div id="content-facts"><p>Доступ к архивным записям разрешен...</p></div>
+                <div id="admin-moderation-area"></div> 
+                <div id="content-facts"></div>
             </div>
 
             <div id="medals" class="tab-content"> 
                 <button class="add-article-btn" onclick="proposeArticle('medals')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> МЕДАЛИ</h2> 
-                <div id="content-medals"><p>Архив наград...</p></div>
+                <div id="content-medals"></div>
             </div>
 
             <div id="flags" class="tab-content"> 
                 <button class="add-article-btn" onclick="proposeArticle('flags')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> ФЛАГИ</h2> 
-                <div id="content-flags"><p>Символика...</p></div>
+                <div id="content-flags"></div>
             </div>
 
             <div id="tubers" class="tab-content"> 
                 <button class="add-article-btn" onclick="proposeArticle('tubers')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> ЮТУБЕРЫ</h2> 
-                <div id="content-tubers"><p>Список исследователей...</p></div>
+                <div id="content-tubers"></div>
             </div>
 
             <div id="community" class="tab-content"> <h2 class="tab-title">> COMMUNITY_HUB</h2> <p>Подключение к узлу...</p> </div>
@@ -438,13 +159,13 @@
             <div id="robots" class="tab-content"> 
                 <button class="add-article-btn" onclick="proposeArticle('robots')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> РОБОТОТЕХНИКА</h2> 
-                <div id="content-robots"><p>Данные по СТР-1...</p></div>
+                <div id="content-robots"></div>
             </div>
 
             <div id="jupiter" class="tab-content"> 
                 <button class="add-article-btn" onclick="proposeArticle('jupiter')">[+] ДОБАВИТЬ СТАТЬЮ</button>
                 <h2 class="tab-title">> ЗАВОД ЮПИТЕР</h2> 
-                <div id="content-jupiter"><p>Секретные цеха...</p></div>
+                <div id="content-jupiter"></div>
             </div>
         </div>
 
@@ -457,258 +178,182 @@
                 TIME: <span id="user-time">0m</span><br>
                 STATUS: <span id="user-status">OFFLINE</span>
             </div>
-            <div class="data-box">
-                ZONE_RADIATION: 1.24 mSv/h
-                <div class="graph-line"></div>
-            </div>
-            <div class="data-box">
-                SATELLITE_LINK: STABLE
-                <br>LOC: 51.2746° N, 30.2241° E
-            </div>
-            <div style="margin-top: auto; opacity: 0.5;">
-                SYSTEM_UPTIME: 142:04:12<br>
-                CORE_TEMP: 42°C
-            </div>
+            <div class="data-box">ZONE_RADIATION: 1.24 mSv/h <div class="graph-line"></div></div>
+            <div class="data-box">SATELLITE_LINK: STABLE<br>LOC: 51.2746° N, 30.2241° E</div>
+            <div style="margin-top: auto; opacity: 0.5;">SYSTEM_UPTIME: 142:04:12<br>CORE_TEMP: 42°C</div>
         </div>
     </div>
 
-    <div class="footer-terminal">
-        Terminal WikiChernobyl может допускать ошибки. <span>Конфиденциальность и правила</span>
-    </div>
+    <div class="footer-terminal">Terminal WikiChernobyl может допускать ошибки. <span>Конфиденциальность и правила</span></div>
+    <div class="system-status-bottom">[ STATUS: CONNECTED ] [ DB: CHERNOBYL_FIREBASE ] [ MINIMAL_MODE: ON ]</div>
 
-    <div class="system-status-bottom">
-        [ STATUS: CONNECTED ] [ DB: CHERNOBYL_P1 ] [ MINIMAL_MODE: ON ]
-    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXCR4osiJNXByDKavnxrMgKZ8iIuhgOpU",
+            authDomain: "chernobyl-wiki.firebaseapp.com",
+            databaseURL: "https://chernobyl-wiki-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chernobyl-wiki",
+            storageBucket: "chernobyl-wiki.firebasestorage.app",
+            messagingSenderId: "472855450786",
+            appId: "1:472855450786:web:68e21ee0cb3827a31bb3fb"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- ТВОИ ПЕРЕМЕННЫЕ ---
         const ADMIN_ID = "DENIS"; 
-
-        let allUsers = JSON.parse(localStorage.getItem('stalker_network_users')) || {};
+        let allUsers = {};
         let currentSession = JSON.parse(localStorage.getItem('stalker_current_session')) || { name: "GUEST_STALKER", isAuth: false };
-        let chatHistory = JSON.parse(localStorage.getItem('stalker_chat')) || [];
-        
-        let approvedArticles = JSON.parse(localStorage.getItem('stalker_articles')) || [];
-        let pendingArticles = JSON.parse(localStorage.getItem('stalker_pending')) || [];
+        let chatHistory = [];
+        let approvedArticles = {};
+        let pendingArticles = {};
 
-        function updateAccountUI() {
-            const user = currentSession.isAuth ? (allUsers[currentSession.name] || { name: currentSession.name, count: 0, rank: "НОВИЧОК", regDate: Date.now() }) : { name: "GUEST_STALKER", count: 0, rank: "НОВИЧОК", regDate: Date.now() };
-            document.getElementById('user-id').innerText = user.name;
-            document.getElementById('user-msg-count').innerText = user.count;
+        // --- СИНХРОНИЗАЦИЯ С FIREBASE ---
+        onValue(ref(db, 'users'), (snapshot) => {
+            allUsers = snapshot.val() || {};
+            updateAccountUI();
+        });
+
+        onValue(ref(db, 'chat'), (snapshot) => {
+            const data = snapshot.val();
+            chatHistory = data ? Object.values(data) : [];
+            renderChat();
+        });
+
+        onValue(ref(db, 'articles'), (snapshot) => {
+            approvedArticles = snapshot.val() || {};
+            renderArticles();
+        });
+
+        onValue(ref(db, 'pending'), (snapshot) => {
+            pendingArticles = snapshot.val() || {};
+            if(currentSession.name === ADMIN_ID) renderAdminPanel();
+        });
+
+        // --- ТВОИ ОРИГИНАЛЬНЫЕ ФУНКЦИИ (АДАПТИРОВАНЫ ПОД FIREBASE) ---
+        window.updateAccountUI = function() {
+            const user = (currentSession.isAuth && allUsers[currentSession.name]) ? allUsers[currentSession.name] : { name: "GUEST_STALKER", count: 0, rank: "НОВИЧОК", regDate: Date.now() };
+            
+            document.getElementById('user-id').innerText = currentSession.isAuth ? currentSession.name : "GUEST_STALKER";
+            document.getElementById('user-msg-count').innerText = user.count || 0;
             document.getElementById('user-status').innerText = currentSession.isAuth ? "ONLINE" : "OFFLINE";
+            
             let minutes = Math.floor((Date.now() - (user.regDate || Date.now())) / 60000);
             document.getElementById('user-time').innerText = minutes + "m";
 
-            if(user.count >= 20) user.rank = "ЛЕГЕНДА";
-            else if(user.count >= 10) user.rank = "СТАЛКЕР";
-            else user.rank = "НОВИЧОК";
-            if(user.name === ADMIN_ID) user.rank = "АДМИНИСТРАТОР";
-            document.getElementById('user-rank').innerText = user.rank;
+            let rank = "НОВИЧОК";
+            if(user.name === ADMIN_ID) rank = "АДМИНИСТРАТОР";
+            else if(user.count >= 20) rank = "ЛЕГЕНДА";
+            else if(user.count >= 10) rank = "СТАЛКЕР";
+            document.getElementById('user-rank').innerText = rank;
 
-            if(currentSession.isAuth) {
-                document.getElementById('status-circle').classList.add('active');
-                allUsers[currentSession.name] = user;
-                localStorage.setItem('stalker_network_users', JSON.stringify(allUsers));
-            } else {
-                document.getElementById('status-circle').classList.remove('active');
-            }
-            renderArticles();
-            renderProfile(); // Обновляем вкладку профиля
-            if(currentSession.name === ADMIN_ID) renderAdminPanel();
+            document.getElementById('status-circle').className = currentSession.isAuth ? "auth-circle active" : "auth-circle";
+            
+            renderProfile();
         }
 
-        // --- НОВАЯ ФУНКЦИЯ: РЕНДЕР ПРОФИЛЯ ---
-        function renderProfile() {
-            const container = document.getElementById('profile-view');
-            if(!container) return;
-
-            if(!currentSession.isAuth) {
-                container.innerHTML = `
-                    <div class="profile-card">
-                        <p style="color: #aa0000">ВНИМАНИЕ: СИСТЕМА НЕ ОПОЗНАЛА ВАС.</p>
-                        <div class="auth-form">
-                            <h3>ВХОД / РЕГИСТРАЦИЯ</h3>
-                            <input type="text" id="auth-login" placeholder="ПОЗЫВНОЙ">
-                            <input type="password" id="auth-pass" placeholder="ПАРОЛЬ">
-                            <button class="btn-action" onclick="uiLogin()">ВОЙТИ</button>
-                            <button class="btn-action" style="background:#1a441a; color:#2f2; margin-left:10px;" onclick="uiRegister()">РЕГИСТРАЦИЯ</button>
-                        </div>
-                    </div>
-                `;
-            } else {
-                const user = allUsers[currentSession.name];
-                container.innerHTML = `
-                    <div class="profile-card">
-                        <h3 style="color:#ffaa00">${user.name}</h3>
-                        <div class="profile-stats-grid">
-                            <div class="stat-item">РАНГ: ${user.rank}</div>
-                            <div class="stat-item">СООБЩЕНИЙ: ${user.count}</div>
-                            <div class="stat-item">В СЕТИ С: ${new Date(user.regDate).toLocaleDateString()}</div>
-                            <div class="stat-item">СТАТУС: ${user.isBanned ? 'ЗАБАНЕН' : 'АКТИВЕН'}</div>
-                        </div>
-                        <br>
-                        <button class="btn-action" style="background:#aa0000; color:#fff" onclick="authChoice()">ВЫЙТИ ИЗ СИСТЕМЫ</button>
-                    </div>
-                `;
-            }
-        }
-
-        function uiLogin() {
+        window.uiLogin = function() {
             let n = document.getElementById('auth-login').value.toUpperCase().trim();
             let p = document.getElementById('auth-pass').value;
             if(!allUsers[n]) return alert("Сталкер не найден");
             if(allUsers[n].password === p) {
                 currentSession = { name: n, isAuth: true };
-                saveAll();
+                localStorage.setItem('stalker_current_session', JSON.stringify(currentSession));
+                updateAccountUI();
             } else alert("Ошибка пароля");
         }
 
-        function uiRegister() {
+        window.uiRegister = function() {
             let n = document.getElementById('auth-login').value.toUpperCase().trim();
             let p = document.getElementById('auth-pass').value;
             if(n.length < 5 || p.length < 8) return alert("Логин 5+, Пароль 8+");
             if(allUsers[n]) return alert("Позывной занят");
             
-            allUsers[n] = { name: n, password: p, count: 0, rank: "НОВИЧОК", regDate: Date.now(), isBanned: false };
+            set(ref(db, 'users/' + n), { name: n, password: p, count: 0, rank: "НОВИЧОК", regDate: Date.now(), isBanned: false });
             currentSession = { name: n, isAuth: true };
-            saveAll();
+            localStorage.setItem('stalker_current_session', JSON.stringify(currentSession));
         }
 
-        function proposeArticle(tab) {
-            if(!currentSession.isAuth) { alert("Авторизуйтесь для подачи статьи!"); return; }
+        window.addComment = function() {
+            const input = document.getElementById('comm-input');
+            const text = input.value.trim();
+            if(text !== "") {
+                if(!currentSession.isAuth) return alert("Сначала авторизуйтесь!");
+                if(allUsers[currentSession.name]?.isBanned) return alert("Вы забанены!");
+                
+                push(ref(db, 'chat'), { user: currentSession.name, text: text, time: Date.now() });
+                update(ref(db, 'users/' + currentSession.name), { count: (allUsers[currentSession.name].count || 0) + 1 });
+                input.value = "";
+            }
+        }
+
+        window.proposeArticle = function(tab) {
+            if(!currentSession.isAuth) return alert("Авторизуйтесь для подачи статьи!");
             let title = prompt("Заголовок статьи:");
-            if(!title) return;
             let text = prompt("Текст статьи:");
-            if(!text) return;
-            let imgUrl = prompt("URL изображения (оставьте пустым, если не нужно):");
-
-            let newPending = {
-                id: Date.now(),
-                author: currentSession.name,
-                tab: tab,
-                title: title,
-                text: text,
-                img: imgUrl || ""
-            };
-
-            pendingArticles.push(newPending);
-            localStorage.setItem('stalker_pending', JSON.stringify(pendingArticles));
-            alert("Статья отправлена на проверку администратору DENIS.");
-            if(currentSession.name === ADMIN_ID) renderAdminPanel();
+            let imgUrl = prompt("URL изображения:");
+            if(title && text) {
+                push(ref(db, 'pending'), {
+                    author: currentSession.name,
+                    tab: tab,
+                    title: title,
+                    text: text,
+                    img: imgUrl || "",
+                    id: Date.now()
+                });
+                alert("Отправлено DENIS на проверку.");
+            }
         }
 
-        function renderArticles() {
+        window.renderArticles = function() {
             const tabs = ['catastrophe', 'facts', 'robots', 'jupiter', 'tubers', 'medals', 'flags'];
-            tabs.forEach(t => {
-                const el = document.getElementById('content-' + t);
-                if(el) el.innerHTML = "";
-            });
+            tabs.forEach(t => document.getElementById('content-' + t).innerHTML = "");
 
-            approvedArticles.forEach(art => {
+            Object.keys(approvedArticles).forEach(key => {
+                const art = approvedArticles[key];
                 const target = document.getElementById('content-' + art.tab);
                 if(target) {
                     const div = document.createElement('div');
                     div.className = 'article-card';
-                    let imgHtml = art.img ? `<img src="${art.img}" class="article-img" onerror="this.style.display='none'">` : "";
-                    let adminBtns = (currentSession.name === ADMIN_ID) ? `<button class="btn-delete" onclick="deleteArticle(${art.id})">УДАЛИТЬ СТАТЬЮ</button>` : "";
-                    
-                    div.innerHTML = `<h3 style="color:#22ff22; font-size:14px;">> ${art.title}</h3>
-                                     ${imgHtml}
-                                     <p style="font-size:13px; color:#aaa;">${art.text}</p>
-                                     <small style="color:#1a441a">Автор: ${art.author}</small><br>
-                                     ${adminBtns}`;
+                    let imgHtml = art.img ? `<img src="${art.img}" class="article-img">` : "";
+                    let adminBtns = (currentSession.name === ADMIN_ID) ? `<button class="btn-delete" onclick="deleteArticle('${key}')">УДАЛИТЬ</button>` : "";
+                    div.innerHTML = `<h3 style="color:#22ff22; font-size:14px;">> ${art.title}</h3>${imgHtml}<p style="font-size:13px; color:#aaa;">${art.text}</p><small style="color:#1a441a">Автор: ${art.author}</small><br>${adminBtns}`;
                     target.appendChild(div);
                 }
             });
         }
 
-        function deleteArticle(id) {
-            if(confirm("Удалить эту статью навсегда?")) {
-                approvedArticles = approvedArticles.filter(a => a.id !== id);
-                localStorage.setItem('stalker_articles', JSON.stringify(approvedArticles));
-                renderArticles();
-            }
-        }
+        window.deleteArticle = (key) => { if(confirm("Удалить?")) remove(ref(db, 'articles/' + key)); };
 
-        function renderAdminPanel() {
+        window.renderAdminPanel = function() {
             const area = document.getElementById('admin-moderation-area');
             if(!area) return;
-            if(pendingArticles.length === 0) {
-                area.innerHTML = "<p style='color:#224422'>[ ОЧЕРЕДЬ ПРОВЕРКИ ПУСТА ]</p>";
-                return;
-            }
-
-            area.innerHTML = "<div class='admin-mod-panel'><h2 style='font-size:10px; color:#ffaa00'>МОДЕРАЦИЯ СТАТЕЙ</h2></div>";
-            pendingArticles.forEach(p => {
+            area.innerHTML = "<div class='admin-mod-panel'><h2 style='font-size:10px; color:#ffaa00'>МОДЕРАЦИЯ</h2></div>";
+            
+            Object.keys(pendingArticles).forEach(key => {
+                const p = pendingArticles[key];
                 const item = document.createElement('div');
                 item.className = 'mod-item';
-                item.innerHTML = `
-                    <b>От: ${p.author}</b> (Вкладка: ${p.tab})<br>
-                    ТИТУЛ: <input type="text" id="edit-title-${p.id}" value="${p.title}" style="background:#000; color:#2f2; border:1px solid #222; width:100%"><br>
-                    ТЕКСТ: <textarea id="edit-text-${p.id}" style="background:#000; color:#aaa; border:1px solid #222; width:100%; height:60px">${p.text}</textarea><br>
-                    ФОТО URL: <input type="text" id="edit-img-${p.id}" value="${p.img}" style="background:#000; color:#2f2; border:1px solid #222; width:100%"><br>
-                    <button onclick="approve(${p.id})" style="background:#22ff22; color:#000; border:none; cursor:pointer; padding:5px; margin-top:5px">ПРИНЯТЬ И СОХРАНИТЬ</button>
-                    <button onclick="reject(${p.id})" style="background:#aa0000; color:#fff; border:none; cursor:pointer; padding:5px; margin-top:5px">ОТКЛОНИТЬ</button>
-                `;
+                item.innerHTML = `От: ${p.author} (${p.tab})<br>ТИТУЛ: <input type="text" id="edit-title-${key}" value="${p.title}" style="width:100%"><br>ТЕКСТ: <textarea id="edit-text-${key}" style="width:100%">${p.text}</textarea><br>
+                <button onclick="approve('${key}')">ПРИНЯТЬ</button> <button onclick="reject('${key}')">ОТКЛОНИТЬ</button>`;
                 area.firstChild.appendChild(item);
             });
         }
 
-        function approve(id) {
-            let index = pendingArticles.findIndex(a => a.id === id);
-            if(index > -1) {
-                pendingArticles[index].title = document.getElementById(`edit-title-${id}`).value;
-                pendingArticles[index].text = document.getElementById(`edit-text-${id}`).value;
-                pendingArticles[index].img = document.getElementById(`edit-img-${id}`).value;
+        window.approve = (key) => {
+            const art = pendingArticles[key];
+            art.title = document.getElementById(`edit-title-${key}`).value;
+            art.text = document.getElementById(`edit-text-${key}`).value;
+            push(ref(db, 'articles'), art);
+            remove(ref(db, 'pending/' + key));
+        };
+        window.reject = (key) => remove(ref(db, 'pending/' + key));
 
-                approvedArticles.push(pendingArticles[index]);
-                pendingArticles.splice(index, 1);
-                localStorage.setItem('stalker_articles', JSON.stringify(approvedArticles));
-                localStorage.setItem('stalker_pending', JSON.stringify(pendingArticles));
-                updateAccountUI();
-            }
-        }
-
-        function reject(id) {
-            let index = pendingArticles.findIndex(a => a.id === id);
-            if(index > -1) {
-                pendingArticles.splice(index, 1);
-                localStorage.setItem('stalker_pending', JSON.stringify(pendingArticles));
-                updateAccountUI();
-            }
-        }
-
-        function authChoice() {
-            if(currentSession.isAuth) {
-                let exit = confirm("Выйти из системы?");
-                if(exit) {
-                    currentSession = { name: "GUEST_STALKER", isAuth: false };
-                    saveAll();
-                }
-                return;
-            }
-            // Перебрасываем на вкладку профиля для входа
-            openTab('profile-tab', document.querySelector('[onclick*="profile-tab"]'));
-        }
-
-        function saveAll() {
-            localStorage.setItem('stalker_current_session', JSON.stringify(currentSession));
-            localStorage.setItem('stalker_network_users', JSON.stringify(allUsers));
-            updateAccountUI();
-            renderChat();
-        }
-
-        function viewProfile(name) {
-            let u = allUsers[name];
-            if(!u) { alert("Данные GUEST_STALKER скрыты."); return; }
-            if(currentSession.name === ADMIN_ID && name !== ADMIN_ID) {
-                let banConfirm = confirm(`--- КПК СТАЛКЕРА ---\nID: ${u.name}\nРАНГ: ${u.rank}\n\nЖелаете заблокировать пользователя?`);
-                if(banConfirm) { allUsers[name].isBanned = true; alert("Пользователь забанен."); saveAll(); }
-            } else {
-                alert(`--- КПК СТАЛКЕРА ---\nID: ${u.name}\nРАНГ: ${u.rank}\nСООБЩЕНИЙ: ${u.count}\nСТАТУС: ${u.isBanned ? "ЗАБАНЕН" : "ЧИСТ"}`);
-            }
-        }
-
-        function renderChat() {
+        window.renderChat = function() {
             const list = document.getElementById('comm-list');
             list.innerHTML = "";
             chatHistory.forEach(msg => {
@@ -721,33 +366,42 @@
             list.scrollTop = list.scrollHeight;
         }
 
-        function openTab(tabId, btn) {
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(c => c.classList.remove('active'));
-            const buttons = document.querySelectorAll('.tab-button');
-            buttons.forEach(b => b.classList.remove('active-tab'));
+        window.viewProfile = function(name) {
+            let u = allUsers[name];
+            if(!u) return alert("Данные скрыты.");
+            if(currentSession.name === ADMIN_ID && name !== ADMIN_ID) {
+                if(confirm(`ID: ${u.name}\nЗабанить?`)) { update(ref(db, 'users/' + name), { isBanned: true }); }
+            } else alert(`ID: ${u.name}\nРАНГ: ${u.rank}\nСООБЩЕНИЙ: ${u.count}`);
+        }
+
+        window.renderProfile = function() {
+            const container = document.getElementById('profile-view');
+            if(!currentSession.isAuth) {
+                container.innerHTML = `<div class="profile-card"><div class="auth-form"><h3>ВХОД / РЕГИСТРАЦИЯ</h3><input type="text" id="auth-login" placeholder="ПОЗЫВНОЙ"><input type="password" id="auth-pass" placeholder="ПАРОЛЬ"><button class="btn-action" onclick="uiLogin()">ВОЙТИ</button><button class="btn-action" style="margin-left:10px;" onclick="uiRegister()">РЕГИСТРАЦИЯ</button></div></div>`;
+            } else {
+                const user = allUsers[currentSession.name] || {};
+                container.innerHTML = `<div class="profile-card"><h3 style="color:#ffaa00">${currentSession.name}</h3><div class="profile-stats-grid"><div class="stat-item">РАНГ: ${document.getElementById('user-rank').innerText}</div><div class="stat-item">СООБЩЕНИЙ: ${user.count || 0}</div></div><br><button class="btn-action" style="background:#aa0000; color:#fff" onclick="authChoice()">ВЫЙТИ</button></div>`;
+            }
+        }
+
+        window.authChoice = function() {
+            if(currentSession.isAuth) {
+                if(confirm("Выйти?")) {
+                    currentSession = { name: "GUEST_STALKER", isAuth: false };
+                    localStorage.setItem('stalker_current_session', JSON.stringify(currentSession));
+                    updateAccountUI();
+                }
+            } else openTab('profile-tab', document.querySelector('[onclick*="profile-tab"]'));
+        }
+
+        window.openTab = function(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active-tab'));
             document.getElementById(tabId).classList.add('active');
             if(btn) btn.classList.add('active-tab');
         }
 
-        function addComment() {
-            const input = document.getElementById('comm-input');
-            if(input.value.trim() !== "") {
-                if(!currentSession.isAuth) { alert("Сначала авторизуйтесь!"); return; }
-                if(allUsers[currentSession.name].isBanned) { alert("Вы забанены!"); return; }
-                const newMsg = { user: currentSession.name, text: input.value };
-                chatHistory.push(newMsg);
-                if(allUsers[currentSession.name]) { allUsers[currentSession.name].count++; }
-                localStorage.setItem('stalker_chat', JSON.stringify(chatHistory));
-                localStorage.setItem('stalker_network_users', JSON.stringify(allUsers));
-                renderChat();
-                updateAccountUI();
-                input.value = "";
-            }
-        }
-
-        setInterval(updateAccountUI, 30000);
-        window.onload = () => { updateAccountUI(); renderChat(); };
+        window.onload = () => { updateAccountUI(); };
     </script>
 </body>
 </html>
