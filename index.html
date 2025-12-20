@@ -1,294 +1,620 @@
 <!DOCTYPE html>
 <html lang='ru'>
 <head>
-    <title>ChernobylWiki</title>
+    <title>ChernobylWiki | Terminal 0.1</title>
     <meta charset='UTF-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* ТВОЙ БАЗОВЫЙ КОД БЕЗ ИЗМЕНЕНИЙ */
         * { box-sizing: border-box; }
         body {
-            background-color: #0d0d0d;
+            background-color: #050505;
             color: #22ff22;
             margin: 0;
             display: flex;
+            flex-direction: column;
             font-family: 'Roboto Mono', monospace;
             height: 100vh;
             width: 100vw;
             overflow: hidden;
+            position: relative;
         }
 
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        /* ЭФФЕКТЫ */
         body::after {
             content: " ";
             position: fixed;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            background-size: 100% 4px, 3px 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 3px;
             z-index: 1000;
             pointer-events: none;
+            opacity: 0.3;
         }
 
+        .scan-line {
+            width: 100%; height: 2px; z-index: 999;
+            background: rgba(34, 255, 34, 0.2);
+            position: absolute; top: 0;
+            animation: scanMove 10s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes scanMove { 0% { top: 0%; } 100% { top: 100%; } }
+
+        /* САЙДБАР */
         .sidebar {
-            width: 320px;
-            min-width: 320px;
-            background-color: #141414;
-            border-right: 3px double #004400;
-            padding: 30px 15px;
+            width: 280px;
+            min-width: 280px;
+            background-color: #080808;
+            border-right: 1px solid #111;
+            padding: 30px 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            height: 100vh;
             z-index: 10;
         }
 
         .sidebar h2 {
             font-family: 'Press Start 2P', cursive;
-            font-size: 11px;
-            color: #ffaa00;
-            text-align: center;
-            margin-bottom: 20px;
+            font-size: 10px; color: #444; margin-bottom: 20px;
+        }
+
+        .nav-group { display: flex; flex-direction: column; gap: 5px; }
+
+        .sidebar-divider {
+            height: 1px; background: #111; margin: 20px 0;
+            position: relative;
+        }
+        .sidebar-divider::after {
+            content: "COMMUNITY_OS"; position: absolute; top: -5px; left: 10px;
+            background: #080808; padding: 0 5px; font-size: 8px; color: #224422;
         }
 
         .tab-button {
-            background: #1a1a1a;
-            color: #22ff22;
-            border: 2px solid #004400;
-            padding: 15px;
-            font-family: 'Roboto Mono', monospace;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.2s;
-            text-align: left;
+            background: transparent; color: #1a661a; border: none;
+            padding: 10px 0; font-family: 'Roboto Mono', monospace;
+            font-size: 13px; text-transform: uppercase; cursor: pointer;
+            transition: 0.3s; text-align: left;
+        }
+        .tab-button:hover, .tab-button.active-tab { color: #22ff22; padding-left: 5px; }
+        .tab-button.active-tab { border-left: 2px solid #22ff22; padding-left: 10px; }
+
+        .sidebar-photo {
+            margin-top: auto;
             width: 100%;
+            border: 1px solid #1a441a;
+            padding: 2px;
+            background: #000;
+        }
+        .sidebar-photo img {
+            width: 100%;
+            display: block;
+            filter: grayscale(1) brightness(0.8);
         }
 
-        .tab-button:hover, .tab-button.active-tab {
-            background: #004400;
-            color: #ffffff;
-            border-color: #22ff22;
-            box-shadow: 0 0 10px rgba(34, 255, 34, 0.3);
-        }
-
+        /* КОНТЕНТ */
         .content-container {
             flex-grow: 1;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: 40px;
-            background: radial-gradient(circle, #1b1b1b 0%, #0a0a0a 100%);
-            overflow: hidden;
-        }
-
-        h1 {
-            font-family: 'Press Start 2P', cursive;
-            color: #ffaa00;
-            text-shadow: 3px 3px #550000;
-            margin: 0 0 30px 0;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .tab-content {
-            display: none;
-            width: 100%;
-            height: 100%;
-            border: 2px solid #333;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 30px;
+            padding: 40px 60px;
+            background: #050505;
             overflow-y: auto;
-            border-radius: 5px;
-            box-shadow: inset 0 0 20px #000;
+            position: relative;
         }
 
-        .tab-content.active { display: block; }
-
-        h2.tab-title {
-            color: #22ff22;
-            border-bottom: 1px solid #22ff22;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-        }
-
-        p { font-size: 18px; line-height: 1.6; margin-bottom: 25px; }
-
-        .jupiter-layout {
-            display: flex;
-            gap: 25px;
-        }
-
-        .jupiter-text {
-            flex: 2;
-        }
-
-        .jupiter-gallery {
-            flex: 1;
+        /* --- СТИЛИ ЧАТА --- */
+        .chat-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            height: 400px;
+            background: #080808;
+            border: 1px solid #111;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            list-style: none;
+            margin: 0;
+        }
+        .chat-msg-item {
+            margin-bottom: 10px;
+            font-size: 13px;
+            border-left: 1px solid #1a441a;
+            padding-left: 10px;
+        }
+        .chat-user-link {
+            color: #ffaa00;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        .chat-user-link:hover { color: #fff; }
+        .chat-input-box {
+            display: flex;
+            border-top: 1px solid #111;
+            padding: 10px;
+            background: #0a0a0a;
+        }
+        .chat-input-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #1a441a;
+            color: #22ff22;
+            padding: 5px;
+            outline: none;
+            font-family: 'Roboto Mono';
+        }
+        .chat-input-box button {
+            background: #1a441a;
+            color: #000;
+            border: none;
+            margin-left: 10px;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-family: 'Press Start 2P';
+            font-size: 8px;
         }
 
-        .jupiter-gallery img {
-            width: 100%;
-            border: 2px solid #004400;
-            filter: grayscale(0.5) contrast(1.2);
-            transition: 0.3s;
+        /* ПРАВАЯ ПАНЕЛЬ */
+        .right-panel {
+            width: 300px;
+            min-width: 300px;
+            border-left: 1px solid #111;
+            padding: 30px 20px;
+            background: #070707;
+            font-size: 10px;
+            color: #1a441a;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .jupiter-gallery img:hover {
-            filter: grayscale(0);
-            border-color: #22ff22;
-            transform: scale(1.02);
+        /* АККАУНТ ИНФО */
+        .user-account-box {
+            border: 1px solid #22ff22;
+            padding: 10px;
+            margin-bottom: 10px;
+            color: #22ff22;
+            position: relative;
+            line-height: 1.5;
         }
 
-        /* --- НОВЫЙ БЛОК ДЛЯ ПОДДЕРЖКИ ТЕЛЕФОНОВ --- */
-        @media screen and (max-width: 768px) {
-            body {
-                flex-direction: column; /* Сайдбар теперь сверху */
-                overflow-y: auto;       /* Разрешаем скролл страницы */
-                height: auto;
-            }
-
-            .sidebar {
-                width: 100%;
-                min-width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 3px double #004400;
-                padding: 15px;
-                position: sticky; /* Меню прилипает к верху */
-                top: 0;
-            }
-
-            .sidebar h2 { margin-bottom: 10px; }
-
-            .tab-button {
-                padding: 10px;
-                font-size: 12px;
-            }
-
-            .content-container {
-                height: auto;
-                padding: 20px;
-                overflow: visible;
-            }
-
-            h1 { font-size: 18px; }
-
-            .tab-content {
-                height: auto;
-                overflow: visible;
-                padding: 15px;
-            }
-
-            .jupiter-layout {
-                flex-direction: column; /* Текст и фото в одну колонку */
-            }
-
-            p { font-size: 16px; }
-            
-            h2.tab-title { font-size: 12px; }
+        .auth-circle {
+            width: 12px; height: 12px;
+            background: #113311;
+            border-radius: 50%;
+            position: absolute;
+            top: 10px; right: 10px;
+            cursor: pointer;
+            border: 1px solid #22ff22;
         }
+        .auth-circle.active { background: #22ff22; box-shadow: 0 0 5px #22ff22; }
+
+        .data-box { border: 1px solid #111; padding: 10px; }
+        .graph-line { height: 2px; background: #1a441a; margin-top: 5px; width: 0%; animation: grow 3s infinite alternate; }
+        @keyframes grow { from { width: 10%; } to { width: 90%; } }
+
+        h1 { font-family: 'Press Start 2P', cursive; color: #ffaa00; font-size: 22px; margin-bottom: 40px; }
+
+        .tab-content { display: none; max-width: 700px; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        h2.tab-title { color: #22ff22; font-size: 12px; font-family: 'Press Start 2P', cursive; margin-bottom: 25px; }
+        p { font-size: 15px; line-height: 1.7; color: #888; }
+
+        .footer-terminal {
+            background: #000;
+            border-top: 1px solid #111;
+            padding: 10px;
+            text-align: center;
+            font-size: 11px;
+            color: #444;
+            z-index: 1100;
+        }
+        .footer-terminal span { color: #226622; cursor: pointer; text-decoration: underline; }
+
+        .system-status-bottom {
+            position: fixed; bottom: 55px; right: 320px;
+            font-size: 9px; color: #113311; text-transform: uppercase;
+        }
+
+        /* НОВЫЕ СТИЛИ ДЛЯ СТАТЕЙ */
+        .add-article-btn {
+            background: #1a441a; color: #22ff22; border: 1px solid #22ff22;
+            padding: 10px; font-family: 'Press Start 2P'; font-size: 8px;
+            cursor: pointer; margin-bottom: 20px; display: block;
+        }
+        .article-card {
+            border: 1px solid #1a441a; padding: 15px; margin-bottom: 15px;
+            background: #080808;
+            position: relative;
+        }
+        .article-img {
+            max-width: 100%; border: 1px solid #22ff22; margin: 10px 0;
+            display: block; filter: sepia(0.5) brightness(0.8);
+        }
+        .admin-mod-panel {
+            border: 1px dashed #ffaa00; padding: 10px; margin-top: 20px;
+        }
+        .mod-item {
+            font-size: 12px; border-bottom: 1px solid #222; padding: 10px 0;
+            background: #0a0a0a; margin-bottom: 5px; padding: 10px;
+        }
+        .btn-delete {
+            background: #aa0000; color: white; border: none; font-size: 8px;
+            font-family: 'Press Start 2P'; cursor: pointer; padding: 5px;
+            margin-top: 5px;
+        }
+
+        @media screen and (max-width: 1100px) { .right-panel { display: none; } }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>[ ТЕРМИНАЛ-01 ]</h2>
-        <button class="tab-button" onclick="openTab('catastrophe', this)">Катастрофа на ЧАЭС</button>
-        <button class="tab-button" onclick="openTab('facts', this)">Интересные факты</button>
-        <button class="tab-button" onclick="openTab('robots', this)">Роботы Припяти</button>
-        <button class="tab-button" onclick="openTab('jupiter', this)">Завод Юпитер</button>
+    <div class="scan-line"></div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h2>TERMINAL_v0.2</h2>
+            <div class="nav-group">
+                <button class="tab-button active-tab" onclick="openTab('catastrophe', this)">Катастрофа</button>
+                <button class="tab-button" onclick="openTab('facts', this)">Архив</button>
+                <button class="tab-button" onclick="openTab('robots', this)">Роботы</button>
+                <button class="tab-button" onclick="openTab('jupiter', this)">Юпитер</button>
+                <button class="tab-button" onclick="openTab('tubers', this)">Ютуберы Припяти</button>
+                <button class="tab-button" onclick="openTab('medals', this)">Медали</button>
+                <button class="tab-button" onclick="openTab('flags', this)">Флаги</button>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="nav-group">
+                <button class="tab-button" onclick="openTab('network-chat', this)">Общий канал</button>
+                <button class="tab-button" onclick="openTab('community', this)">Комьюнити</button>
+            </div>
+
+            <div class="sidebar-photo">
+                <img src="https://s3.stroi-news.ru/img/znak-radiatsiya-kartinki-26.jpg" alt="Sector">
+            </div>
+        </div>
+
+        <div class="content-container">
+            <h1>WikiChernobyl</h1>
+
+            <div id="catastrophe" class="tab-content active">
+                <button class="add-article-btn" onclick="proposeArticle('catastrophe')">[+] ДОБАВИТЬ СТАТЬЮ</button>
+                <h2 class="tab-title">> ИСТОРИЯ ОБЪЕКТА</h2>
+                <div id="content-catastrophe">
+                    <p>Основные данные по инциденту 1986 года загружены в буфер.</p>
+                </div>
+            </div>
+
+            <div id="network-chat" class="tab-content">
+                <h2 class="tab-title">> СЕТЕВОЙ КАНАЛ PDA</h2>
+                <div class="chat-wrapper">
+                    <ul class="chat-messages" id="comm-list"></ul>
+                    <div class="chat-input-box">
+                        <input type="text" id="comm-input" placeholder="Введите сообщение в сеть...">
+                        <button onclick="addComment()">ОТПРАВИТЬ</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="facts" class="tab-content"> 
+                <button class="add-article-btn" onclick="proposeArticle('facts')">[+] ДОБАВИТЬ СТАТЬЮ</button>
+                <h2 class="tab-title">> АРХИВНЫЕ ДАННЫЕ</h2> 
+                <div id="admin-moderation-area"></div> <div id="content-facts"><p>Доступ к архивным записям разрешен...</p></div>
+            </div>
+
+            <div id="medals" class="tab-content"> 
+                <button class="add-article-btn" onclick="proposeArticle('medals')">[+] ДОБАВИТЬ СТАТЬЮ</button>
+                <h2 class="tab-title">> МЕДАЛИ</h2> 
+                <div id="content-medals"><p>Архив наград...</p></div>
+            </div>
+
+            <div id="flags" class="tab-content"> 
+                <button class="add-article-btn" onclick="proposeArticle('flags')">[+] ДОБАВИТЬ СТАТЬЮ</button>
+                <h2 class="tab-title">> ФЛАГИ</h2> 
+                <div id="content-flags"><p>Символика...</p></div>
+            </div>
+
+            <div id="tubers" class="tab-content"> 
+                <button class="add-article-btn" onclick="proposeArticle('tubers')">[+] ДОБАВИТЬ СТАТЬЮ</button>
+                <h2 class="tab-title">> ЮТУБЕРЫ</h2> 
+                <div id="content-tubers"><p>Список исследователей...</p></div>
+            </div>
+
+            <div id="community" class="tab-content"> <h2 class="tab-title">> COMMUNITY_HUB</h2> <p>Подключение к узлу...</p> </div>
+
+            <div id="robots" class="tab-content"> 
+                <button class="add-article-btn" onclick="proposeArticle('robots')">[+] ДОБАВИТЬ СТАТЬЮ</button>
+                <h2 class="tab-title">> РОБОТОТЕХНИКА</h2> 
+                <div id="content-robots"><p>Данные по СТР-1...</p></div>
+            </div>
+
+            <div id="jupiter" class="tab-content"> 
+                <button class="add-article-btn" onclick="proposeArticle('jupiter')">[+] ДОБАВИТЬ СТАТЬЮ</button>
+                <h2 class="tab-title">> ЗАВОД ЮПИТЕР</h2> 
+                <div id="content-jupiter"><p>Секретные цеха...</p></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="user-account-box">
+                <div class="auth-circle" id="status-circle" onclick="authChoice()"></div>
+                ID: <span id="user-id">GUEST_STALKER</span><br>
+                RANK: <span id="user-rank">НОВИЧОК</span><br>
+                MSGS: <span id="user-msg-count">0</span><br>
+                TIME: <span id="user-time">0m</span><br>
+                STATUS: <span id="user-status">OFFLINE</span>
+            </div>
+            <div class="data-box">
+                ZONE_RADIATION: 1.24 mSv/h
+                <div class="graph-line"></div>
+            </div>
+            <div class="data-box">
+                SATELLITE_LINK: STABLE
+                <br>LOC: 51.2746° N, 30.2241° E
+            </div>
+            <div style="margin-top: auto; opacity: 0.5;">
+                SYSTEM_UPTIME: 142:04:12<br>
+                CORE_TEMP: 42°C
+            </div>
+        </div>
     </div>
 
-    <div class="content-container">
-        <h1>WikiChernobyl</h1>
+    <div class="footer-terminal">
+        Terminal WikiChernobyl может допускать ошибки. <span>Конфиденциальность и правила</span>
+    </div>
 
-        <div id="catastrophe" class="tab-content active">
-            <h2 class="tab-title">> ИСТОРИЯ ОБЪЕКТА</h2>
-            <p>Основные факты о катастрофе 1986 года
-Событие: Взрыв на 4-м энергоблоке ЧАЭС в ходе испытаний турбогенератора. Реактор типа РБМК-1000 был полностью разрушен.
-Причины: Сочетание конструктивных недостатков реактора и действий персонала, отключившего системы защиты для проведения эксперимента.
-Масштаб: Радиоактивному загрязнению подверглось более 200 000 кв. км территорий, в основном в Украине, Беларуси и России.
-Ликвидация: В устранении последствий участвовало около 600 000 человек («ликвидаторы»).
-Последствия: Создана 30-километровая зона отчуждения; город Припять стал «городом-призраком». Экономический ущерб оценивается в сотни миллиардов долларов.</p>
-        </div>
-
-        <div id="facts" class="tab-content">
-            <h2 class="tab-title">> АРХИВНЫЕ ДАННЫЕ</h2>
-            <p>1.Чернобыль — это не только авария 1986 года, но и город с уникальной историей: в Чернобыле до аварии проживали представители разных национальностей (включая значительное число евреев), а после катастрофы, несмотря на эвакуацию, в зоне отчуждения появились «самосёлы» — люди, вернувшиеся в свои дома, а также нелегальные туристы и мародеры; кроме того, авария на ЧАЭС и её последствия стали основой для мировых культурных явлений, включая популярный сериал HBO и важные героические истории, как "самоубийственная" миссия трех инженеров «водолазов</p>
-            <p>2.Первые часы/дни: Сотрудники станции и пожарные, находившиеся в эпицентре, получили дозы в тысячи рентген, что привело к развитию ОЛП и смерти в течение нескольких недель/месяцев. Население: Основная масса людей вдали от станции получила гораздо меньшие, но все еще опасные дозы, особенно из-за радиоактивного йода, который накапливается в щитовидной железе.</p>
-            <p>3.Черно́быль (укр. Чорно́биль — производное от растения «чернобыльник», или «полынь обыкновенная») — город в зоне отчуждения Чернобыльской АЭС, Вышгородский район Киевской области Украины. Расположен на реке Припять, недалеко от её впадения в Киевское водохранилище. Является заповедной зоной и охраняется законом</p>
-            <p>4.«Самонаселенцы»: В зоне отчуждения до сих пор живут люди, которые вернулись в свои дома — «самосёлы», многие из них связаны с Чернобылем или Припятью. Языковое разнообразие: В 1926 году в Чернобыле говорили на украинском, еврейском, русском и польском языках, что говорит о многонациональности города до аварии. Город-транспортный узел: Припять, город-спутник ЧАЭС, был не только домом для энергетиков, но и важным транспортным узлом с речным портом, железной дорогой и дорожной сетью. Саркофаг атаковали дроны: В 2025 году на новый конфайнмент над 4-м энергоблоком Чернобыльской АЭС были совершены атаки дронами.</p>
-        </div>
-
-        <div id="robots" class="tab-content">
-            <h2 class="tab-title">> РОБОТОТЕХНИКА В ЗОНЕ</h2>
-            <div class="jupiter-layout">
-                <div class="jupiter-text">
-                    <p>Для ликвидации последствий аварии на ЧАЭС применялись различные роботы, так как уровни радиации были смертельны для человека.</p>
-                    <p>Среди них были советские СТР-1, немецкие «Джокеры» и японские роботы. Однако из-за сверхвысокого излучения электроника часто выходила из строя, и основную работу в итоге пришлось выполнять людям.</p>
-					<p>Роботы в Чернобыле (1986 год) сыграли ключевую роль в ликвидации последствий аварии, выполняя опасные задачи на крыше ЧАЭС и в зоне реактора для радиационной разведки, разбора завалов и очистки территории, где радиация была смертельной для людей, хотя импортные модели (MF-2, MF-3) быстро выходили из строя, а советские разработки ЦНИИ РТК (СТР-1, "Антошка", "Вовочка", "Мобот") и колесные разведчики (РР-1, РР-2) показали большую эффективность, стимулируя развитие отечественной робототехники. 
-Основные задачи роботов:
-Разведка: Оценка уровней радиации в наиболее опасных зонах, в том числе внутри четвертого энергоблока.
-Очистка кровли: Сброс радиоактивного мусора (рубероида) с крыши, куда люди не могли добраться, с помощью роботов-бульдозеров.
-Дезактивация и захоронение: Перемещение радиоактивных материалов и очистка прилегающих территорий.</p>
-                </div>
-                <div class="jupiter-gallery">
-                    <img src="https://www.atomic-energy.ru/files/images/2015/03/robot-011.jpg" alt="Робот 1">
-                    <img src="data:image/jpeg;base64,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" alt="Робот 2">
-                    <img src="https://chernobyl-spas.info/uploads/posts/2019-12/1577611982_dsp.jpg" alt="Робот 3">
-                </div>
-            </div>
-        </div>
-
-        <div id="jupiter" class="tab-content">
-            <h2 class="tab-title">> ЗАВОД ЮПИТЕР</h2>
-            <div class="jupiter-layout">
-                <div class="jupiter-text">
-                    <p>Завод «Юпитер» — одно из самых загадочных мест Припяти. Официально он производил детали для магнитофонов, но на деле выполнял оборонные заказы.</p>
-                    <p>После аварии здесь располагавались лаборатории для испытания роботов и дезактивации техники. В подвалах завода до сих пор находят образцы почвы с аномально высоким уровнем радиации.</p>
-					<p>Завод «Юпитер», расположенный на окраине Припяти, является одним из самых загадочных объектов Чернобыльской зоны отчуждения.
-Вот основные факты о нем:
-Официальное назначение: Завод открылся в 1980 году как филиал киевского завода «Маяк». Публично заявлялось, что предприятие производит бытовую электронику, в частности детали для кассетных магнитофонов.
-Секретная деятельность: На самом деле «Юпитер» был объектом оборонного комплекса. Здесь производили полупроводниковые компоненты для военной промышленности и проводили испытания роботизированных систем. Существуют данные, что завод выпускал комплектующие для межконтинентальных баллистических ракет.
-Работа после аварии: В отличие от большинства объектов Припяти, «Юпитер» не был заброшен сразу после катастрофы 1986 года. Его помещения использовали как базу для спецпредприятия «Спецатом». Там до 1996 года разрабатывали и тестировали роботов для работы в зонах с высоким уровнем радиации и отрабатывали методы дезактивации.
-Радиационная обстановка: На территории завода, особенно в подвалах, до сих пор фиксируется очень высокий уровень радиации. Это связано с тем, что там хранились образцы высокоактивного грунта и оборудования, использовавшегося для экспериментов.</p>
-                </div>
-                <div class="jupiter-gallery">
-                    <img src="https://th.bing.com/th/id/R.326be3fd5d1295c6f69ba639231e1d7b?rik=knSjavHdRJ8%2b%2fQ&pid=ImgRaw&r=0" alt="Yupiter 1">
-                    <img src="https://i.obozrevatel.com/gallery/2021/6/21/7022879original.jpg" alt="Юпитер 2">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Pripjat_2019_63.jpg" alt="Юпитер 3">
-                </div>
-            </div>
-        </div>
+    <div class="system-status-bottom">
+        [ STATUS: CONNECTED ] [ DB: CHERNOBYL_P1 ] [ MINIMAL_MODE: ON ]
     </div>
 
     <script>
-        function openTab(tabId, btn) {
-            var contents = document.getElementsByClassName('tab-content');
-            for (var i = 0; i < contents.length; i++) {
-                contents[i].style.display = 'none'; 
+        const ADMIN_ID = "DENIS"; 
+
+        let allUsers = JSON.parse(localStorage.getItem('stalker_network_users')) || {};
+        let currentSession = JSON.parse(localStorage.getItem('stalker_current_session')) || { name: "GUEST_STALKER", isAuth: false };
+        let chatHistory = JSON.parse(localStorage.getItem('stalker_chat')) || [];
+        
+        let approvedArticles = JSON.parse(localStorage.getItem('stalker_articles')) || [];
+        let pendingArticles = JSON.parse(localStorage.getItem('stalker_pending')) || [];
+
+        function updateAccountUI() {
+            const user = currentSession.isAuth ? (allUsers[currentSession.name] || { name: currentSession.name, count: 0, rank: "НОВИЧОК", regDate: Date.now() }) : { name: "GUEST_STALKER", count: 0, rank: "НОВИЧОК", regDate: Date.now() };
+            document.getElementById('user-id').innerText = user.name;
+            document.getElementById('user-msg-count').innerText = user.count;
+            document.getElementById('user-status').innerText = currentSession.isAuth ? "ONLINE" : "OFFLINE";
+            let minutes = Math.floor((Date.now() - (user.regDate || Date.now())) / 60000);
+            document.getElementById('user-time').innerText = minutes + "m";
+
+            if(user.count >= 20) user.rank = "ЛЕГЕНДА";
+            else if(user.count >= 10) user.rank = "СТАЛКЕР";
+            else user.rank = "НОВИЧОК";
+            if(user.name === ADMIN_ID) user.rank = "АДМИНИСТРАТОР";
+            document.getElementById('user-rank').innerText = user.rank;
+
+            if(currentSession.isAuth) {
+                document.getElementById('status-circle').classList.add('active');
+                allUsers[currentSession.name] = user;
+                localStorage.setItem('stalker_network_users', JSON.stringify(allUsers));
+            } else {
+                document.getElementById('status-circle').classList.remove('active');
             }
-            var buttons = document.getElementsByClassName('tab-button');
-            for (var i = 0; i < buttons.length; i++) {
-                buttons[i].classList.remove('active-tab');
-            }
-            document.getElementById(tabId).style.display = 'block';
-            btn.classList.add('active-tab');
-            
-            // Авто-скролл к контенту на мобилках при клике
-            if (window.innerWidth <= 768) {
-                document.querySelector('.content-container').scrollIntoView({ behavior: 'smooth' });
+            renderArticles();
+            if(currentSession.name === ADMIN_ID) renderAdminPanel();
+        }
+
+        function proposeArticle(tab) {
+            if(!currentSession.isAuth) { alert("Авторизуйтесь для подачи статьи!"); return; }
+            let title = prompt("Заголовок статьи:");
+            if(!title) return;
+            let text = prompt("Текст статьи:");
+            if(!text) return;
+            let imgUrl = prompt("URL изображения (оставьте пустым, если не нужно):");
+
+            let newPending = {
+                id: Date.now(),
+                author: currentSession.name,
+                tab: tab,
+                title: title,
+                text: text,
+                img: imgUrl || ""
+            };
+
+            pendingArticles.push(newPending);
+            localStorage.setItem('stalker_pending', JSON.stringify(pendingArticles));
+            alert("Статья отправлена на проверку администратору DENIS.");
+            if(currentSession.name === ADMIN_ID) renderAdminPanel();
+        }
+
+        function renderArticles() {
+            const tabs = ['catastrophe', 'facts', 'robots', 'jupiter', 'tubers', 'medals', 'flags'];
+            tabs.forEach(t => {
+                const el = document.getElementById('content-' + t);
+                if(el) el.innerHTML = "";
+            });
+
+            approvedArticles.forEach(art => {
+                const target = document.getElementById('content-' + art.tab);
+                if(target) {
+                    const div = document.createElement('div');
+                    div.className = 'article-card';
+                    let imgHtml = art.img ? `<img src="${art.img}" class="article-img" onerror="this.style.display='none'">` : "";
+                    let adminBtns = (currentSession.name === ADMIN_ID) ? `<button class="btn-delete" onclick="deleteArticle(${art.id})">УДАЛИТЬ СТАТЬЮ</button>` : "";
+                    
+                    div.innerHTML = `<h3 style="color:#22ff22; font-size:14px;">> ${art.title}</h3>
+                                     ${imgHtml}
+                                     <p style="font-size:13px; color:#aaa;">${art.text}</p>
+                                     <small style="color:#1a441a">Автор: ${art.author}</small><br>
+                                     ${adminBtns}`;
+                    target.appendChild(div);
+                }
+            });
+        }
+
+        function deleteArticle(id) {
+            if(confirm("Удалить эту статью навсегда?")) {
+                approvedArticles = approvedArticles.filter(a => a.id !== id);
+                localStorage.setItem('stalker_articles', JSON.stringify(approvedArticles));
+                renderArticles();
             }
         }
-        window.onload = function() {
-            document.querySelector('.tab-button').classList.add('active-tab');
-        };
+
+        function renderAdminPanel() {
+            const area = document.getElementById('admin-moderation-area');
+            if(!area) return;
+            if(pendingArticles.length === 0) {
+                area.innerHTML = "<p style='color:#224422'>[ ОЧЕРЕДЬ ПРОВЕРКИ ПУСТА ]</p>";
+                return;
+            }
+
+            area.innerHTML = "<div class='admin-mod-panel'><h2 style='font-size:10px; color:#ffaa00'>МОДЕРАЦИЯ СТАТЕЙ</h2></div>";
+            pendingArticles.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'mod-item';
+                item.innerHTML = `
+                    <b>От: ${p.author}</b> (Вкладка: ${p.tab})<br>
+                    ТИТУЛ: <input type="text" id="edit-title-${p.id}" value="${p.title}" style="background:#000; color:#2f2; border:1px solid #222; width:100%"><br>
+                    ТЕКСТ: <textarea id="edit-text-${p.id}" style="background:#000; color:#aaa; border:1px solid #222; width:100%; height:60px">${p.text}</textarea><br>
+                    ФОТО URL: <input type="text" id="edit-img-${p.id}" value="${p.img}" style="background:#000; color:#2f2; border:1px solid #222; width:100%"><br>
+                    <button onclick="approve(${p.id})" style="background:#22ff22; color:#000; border:none; cursor:pointer; padding:5px; margin-top:5px">ПРИНЯТЬ И СОХРАНИТЬ</button>
+                    <button onclick="reject(${p.id})" style="background:#aa0000; color:#fff; border:none; cursor:pointer; padding:5px; margin-top:5px">ОТКЛОНИТЬ</button>
+                `;
+                area.firstChild.appendChild(item);
+            });
+        }
+
+        function approve(id) {
+            let index = pendingArticles.findIndex(a => a.id === id);
+            if(index > -1) {
+                // Сохраняем правки админа перед одобрением
+                pendingArticles[index].title = document.getElementById(`edit-title-${id}`).value;
+                pendingArticles[index].text = document.getElementById(`edit-text-${id}`).value;
+                pendingArticles[index].img = document.getElementById(`edit-img-${id}`).value;
+
+                approvedArticles.push(pendingArticles[index]);
+                pendingArticles.splice(index, 1);
+                localStorage.setItem('stalker_articles', JSON.stringify(approvedArticles));
+                localStorage.setItem('stalker_pending', JSON.stringify(pendingArticles));
+                updateAccountUI();
+            }
+        }
+
+        function reject(id) {
+            let index = pendingArticles.findIndex(a => a.id === id);
+            if(index > -1) {
+                pendingArticles.splice(index, 1);
+                localStorage.setItem('stalker_pending', JSON.stringify(pendingArticles));
+                updateAccountUI();
+            }
+        }
+
+        function authChoice() {
+            if(currentSession.isAuth) {
+                let exit = confirm("Выйти из системы?");
+                if(exit) {
+                    currentSession = { name: "GUEST_STALKER", isAuth: false };
+                    saveAll();
+                }
+                return;
+            }
+            let choice = prompt("Выберите действие:\n1 - Войти\n2 - Регистрация");
+            if (choice === "1") loginUser();
+            else if (choice === "2") registerUser();
+        }
+
+        function registerUser() {
+            let accounts = Object.values(allUsers);
+            if(accounts.length >= 3) { alert("Ошибка: Превышен лимит создания аккаунтов (Макс: 3)"); return; }
+            let name = prompt("Придумайте позывной (минимум 5 символов):").toUpperCase().trim();
+            if(!name || name.length < 5) { alert("Никнейм слишком короткий!"); return; }
+            if(allUsers[name]) { alert("Этот никнейм уже занят!"); return; }
+            let pass = prompt("Придумайте пароль (минимум 8 символов):");
+            if(!pass || pass.length < 8) { alert("Пароль слишком короткий!"); return; }
+            allUsers[name] = { name: name, password: pass, count: 0, rank: "НОВИЧОК", regDate: Date.now(), isBanned: false };
+            currentSession = { name: name, isAuth: true };
+            saveAll();
+        }
+
+        function loginUser() {
+            let name = prompt("Введите позывной:").toUpperCase().trim();
+            if(!allUsers[name]) { alert("Пользователь не найден!"); return; }
+            if(allUsers[name].isBanned) { alert("ДОСТУП ЗАПРЕЩЕН: Аккаунт заблокирован."); return; }
+            let pass = prompt("Введите пароль:");
+            if(allUsers[name].password === pass) {
+                currentSession = { name: name, isAuth: true };
+                saveAll();
+            } else { alert("Неверный пароль!"); }
+        }
+
+        function saveAll() {
+            localStorage.setItem('stalker_current_session', JSON.stringify(currentSession));
+            localStorage.setItem('stalker_network_users', JSON.stringify(allUsers));
+            updateAccountUI();
+            renderChat();
+        }
+
+        function viewProfile(name) {
+            let u = allUsers[name];
+            if(!u) { alert("Данные GUEST_STALKER скрыты."); return; }
+            if(currentSession.name === ADMIN_ID && name !== ADMIN_ID) {
+                let banConfirm = confirm(`--- КПК СТАЛКЕРА ---\nID: ${u.name}\nРАНГ: ${u.rank}\n\nЖелаете заблокировать пользователя?`);
+                if(banConfirm) { allUsers[name].isBanned = true; alert("Пользователь забанен."); saveAll(); }
+            } else {
+                alert(`--- КПК СТАЛКЕРА ---\nID: ${u.name}\nРАНГ: ${u.rank}\nСООБЩЕНИЙ: ${u.count}\nСТАТУС: ${u.isBanned ? "ЗАБАНЕН" : "ЧИСТ"}`);
+            }
+        }
+
+        function renderChat() {
+            const list = document.getElementById('comm-list');
+            list.innerHTML = "";
+            chatHistory.forEach(msg => {
+                const li = document.createElement('li');
+                li.className = 'chat-msg-item';
+                let color = (msg.user === ADMIN_ID) ? "#ff0000" : "#ffaa00";
+                li.innerHTML = `<span class="chat-user-link" style="color:${color}" onclick="viewProfile('${msg.user}')">${msg.user}</span>: <span style="color:#888">${msg.text}</span>`;
+                list.appendChild(li);
+            });
+            list.scrollTop = list.scrollHeight;
+        }
+
+        function openTab(tabId, btn) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(c => c.classList.remove('active'));
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(b => b.classList.remove('active-tab'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active-tab');
+        }
+
+        function addComment() {
+            const input = document.getElementById('comm-input');
+            if(input.value.trim() !== "") {
+                if(!currentSession.isAuth) { alert("Сначала авторизуйтесь!"); return; }
+                if(allUsers[currentSession.name].isBanned) { alert("Вы забанены!"); return; }
+                const newMsg = { user: currentSession.name, text: input.value };
+                chatHistory.push(newMsg);
+                if(allUsers[currentSession.name]) { allUsers[currentSession.name].count++; }
+                localStorage.setItem('stalker_chat', JSON.stringify(chatHistory));
+                localStorage.setItem('stalker_network_users', JSON.stringify(allUsers));
+                renderChat();
+                updateAccountUI();
+                input.value = "";
+            }
+        }
+
+        setInterval(updateAccountUI, 30000);
+        window.onload = () => { updateAccountUI(); renderChat(); };
     </script>
 </body>
 </html>
