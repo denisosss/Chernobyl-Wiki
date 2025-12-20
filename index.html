@@ -257,6 +257,24 @@
             margin-top: 5px;
         }
 
+        /* --- СТИЛИ ПРОФИЛЯ --- */
+        .profile-card {
+            border: 1px solid #22ff22; padding: 20px; background: #0a0a0a;
+        }
+        .profile-stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;
+        }
+        .stat-item { border: 1px solid #113311; padding: 10px; font-size: 12px; }
+        .auth-form { margin-top: 20px; border-top: 1px solid #111; padding-top: 20px; }
+        .auth-form input {
+            display: block; width: 100%; background: #000; border: 1px solid #1a441a;
+            color: #22ff22; padding: 10px; margin-bottom: 10px; font-family: 'Roboto Mono';
+        }
+        .btn-action {
+            background: #22ff22; color: #000; border: none; padding: 10px 20px;
+            font-family: 'Press Start 2P'; font-size: 8px; cursor: pointer;
+        }
+
         /* --- ОБНОВЛЕННОЕ МАСШТАБИРОВАНИЕ ДЛЯ ТЕЛЕФОНОВ --- */
         @media screen and (max-width: 900px) {
             body {
@@ -278,7 +296,7 @@
                 height: auto;
             }
             .sidebar-photo {
-                display: block; /* По просьбе пользователя возвращаем всё */
+                display: block; 
                 margin-top: 20px;
                 max-width: 200px;
             }
@@ -288,7 +306,7 @@
                 border-left: none;
                 border-top: 1px solid #111;
                 padding: 20px;
-                order: 3; /* Сдвигаем вниз после контента */
+                order: 3;
             }
             .system-status-bottom {
                 position: static;
@@ -354,6 +372,7 @@
 
             <div class="nav-group">
                 <button class="tab-button" onclick="openTab('network-chat', this)">Общий канал</button>
+                <button class="tab-button" onclick="openTab('profile-tab', this)">Профиль</button>
                 <button class="tab-button" onclick="openTab('community', this)">Комьюнити</button>
             </div>
 
@@ -364,6 +383,12 @@
 
         <div class="content-container">
             <h1>WikiChernobyl</h1>
+
+            <div id="profile-tab" class="tab-content">
+                <h2 class="tab-title">> КПК: ЛИЧНЫЕ ДАННЫЕ</h2>
+                <div id="profile-view">
+                    </div>
+            </div>
 
             <div id="catastrophe" class="tab-content active">
                 <button class="add-article-btn" onclick="proposeArticle('catastrophe')">[+] ДОБАВИТЬ СТАТЬЮ</button>
@@ -487,7 +512,65 @@
                 document.getElementById('status-circle').classList.remove('active');
             }
             renderArticles();
+            renderProfile(); // Обновляем вкладку профиля
             if(currentSession.name === ADMIN_ID) renderAdminPanel();
+        }
+
+        // --- НОВАЯ ФУНКЦИЯ: РЕНДЕР ПРОФИЛЯ ---
+        function renderProfile() {
+            const container = document.getElementById('profile-view');
+            if(!container) return;
+
+            if(!currentSession.isAuth) {
+                container.innerHTML = `
+                    <div class="profile-card">
+                        <p style="color: #aa0000">ВНИМАНИЕ: СИСТЕМА НЕ ОПОЗНАЛА ВАС.</p>
+                        <div class="auth-form">
+                            <h3>ВХОД / РЕГИСТРАЦИЯ</h3>
+                            <input type="text" id="auth-login" placeholder="ПОЗЫВНОЙ">
+                            <input type="password" id="auth-pass" placeholder="ПАРОЛЬ">
+                            <button class="btn-action" onclick="uiLogin()">ВОЙТИ</button>
+                            <button class="btn-action" style="background:#1a441a; color:#2f2; margin-left:10px;" onclick="uiRegister()">РЕГИСТРАЦИЯ</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const user = allUsers[currentSession.name];
+                container.innerHTML = `
+                    <div class="profile-card">
+                        <h3 style="color:#ffaa00">${user.name}</h3>
+                        <div class="profile-stats-grid">
+                            <div class="stat-item">РАНГ: ${user.rank}</div>
+                            <div class="stat-item">СООБЩЕНИЙ: ${user.count}</div>
+                            <div class="stat-item">В СЕТИ С: ${new Date(user.regDate).toLocaleDateString()}</div>
+                            <div class="stat-item">СТАТУС: ${user.isBanned ? 'ЗАБАНЕН' : 'АКТИВЕН'}</div>
+                        </div>
+                        <br>
+                        <button class="btn-action" style="background:#aa0000; color:#fff" onclick="authChoice()">ВЫЙТИ ИЗ СИСТЕМЫ</button>
+                    </div>
+                `;
+            }
+        }
+
+        function uiLogin() {
+            let n = document.getElementById('auth-login').value.toUpperCase().trim();
+            let p = document.getElementById('auth-pass').value;
+            if(!allUsers[n]) return alert("Сталкер не найден");
+            if(allUsers[n].password === p) {
+                currentSession = { name: n, isAuth: true };
+                saveAll();
+            } else alert("Ошибка пароля");
+        }
+
+        function uiRegister() {
+            let n = document.getElementById('auth-login').value.toUpperCase().trim();
+            let p = document.getElementById('auth-pass').value;
+            if(n.length < 5 || p.length < 8) return alert("Логин 5+, Пароль 8+");
+            if(allUsers[n]) return alert("Позывной занят");
+            
+            allUsers[n] = { name: n, password: p, count: 0, rank: "НОВИЧОК", regDate: Date.now(), isBanned: false };
+            currentSession = { name: n, isAuth: true };
+            saveAll();
         }
 
         function proposeArticle(tab) {
@@ -603,33 +686,8 @@
                 }
                 return;
             }
-            let choice = prompt("Выберите действие:\n1 - Войти\n2 - Регистрация");
-            if (choice === "1") loginUser();
-            else if (choice === "2") registerUser();
-        }
-
-        function registerUser() {
-            let accounts = Object.values(allUsers);
-            if(accounts.length >= 3) { alert("Ошибка: Превышен лимит создания аккаунтов (Макс: 3)"); return; }
-            let name = prompt("Придумайте позывной (минимум 5 символов):").toUpperCase().trim();
-            if(!name || name.length < 5) { alert("Никнейм слишком короткий!"); return; }
-            if(allUsers[name]) { alert("Этот никнейм уже занят!"); return; }
-            let pass = prompt("Придумайте пароль (минимум 8 символов):");
-            if(!pass || pass.length < 8) { alert("Пароль слишком короткий!"); return; }
-            allUsers[name] = { name: name, password: pass, count: 0, rank: "НОВИЧОК", regDate: Date.now(), isBanned: false };
-            currentSession = { name: name, isAuth: true };
-            saveAll();
-        }
-
-        function loginUser() {
-            let name = prompt("Введите позывной:").toUpperCase().trim();
-            if(!allUsers[name]) { alert("Пользователь не найден!"); return; }
-            if(allUsers[name].isBanned) { alert("ДОСТУП ЗАПРЕЩЕН: Аккаунт заблокирован."); return; }
-            let pass = prompt("Введите пароль:");
-            if(allUsers[name].password === pass) {
-                currentSession = { name: name, isAuth: true };
-                saveAll();
-            } else { alert("Неверный пароль!"); }
+            // Перебрасываем на вкладку профиля для входа
+            openTab('profile-tab', document.querySelector('[onclick*="profile-tab"]'));
         }
 
         function saveAll() {
@@ -669,7 +727,7 @@
             const buttons = document.querySelectorAll('.tab-button');
             buttons.forEach(b => b.classList.remove('active-tab'));
             document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active-tab');
+            if(btn) btn.classList.add('active-tab');
         }
 
         function addComment() {
